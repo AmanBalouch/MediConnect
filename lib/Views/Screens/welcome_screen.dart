@@ -86,7 +86,7 @@ class WelcomeScreen extends StatelessWidget {
                       // Get Started Button
                       PrimaryButton(
                         label: 'Get Started',
-                        onPressed: () => {},
+                        onPressed: () => {Navigator.pushNamed(context,"/role-selection")},
                       ),
                       const SizedBox(height: 12),
 
