@@ -63,7 +63,7 @@ class WelcomeScreen extends StatelessWidget {
 
                       // Main Title
                       Text(
-                        'Your Health,\nReimagined',
+                        'MediConnect\nYour Health, Reimagined',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.displayMedium?.copyWith(
                               color: Colors.white,
