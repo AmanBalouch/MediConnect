@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/Views/Widgets/index.dart';
+import 'package:mediconnectcode/Views/Screens/signup_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({Key? key}) : super(key: key);
@@ -18,20 +19,17 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     });
   }
 
-  // void _navigateToNextScreen(BuildContext context) {
-  //   if (selectedRole == 'patient') {
-  //     Navigator.of(context).pushNamed('/signup');
-  //   } else {
-  //     // TODO: Navigate to doctor signup
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Doctor signup coming soon...')),
-  //     );
-  //   }
-  // }
-  //
-  // void _navigateToLogin(BuildContext context) {
-  //   Navigator.of(context).pushNamed('/login');
-  // }
+  void _navigateToNextScreen(BuildContext context) {
+    // Pass role as parameter: 0 for patient, 1 for doctor
+    final roleValue = selectedRole == 'patient' ? 0 : 1;
+
+    // Navigate to SignUpScreen with role parameter
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SignUpScreen(userRole: roleValue),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +180,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       label: selectedRole == 'patient'
                           ? 'Continue as Patient →'
                           : 'Continue as Doctor →',
-                      onPressed: () => {},
+                      onPressed: () => _navigateToNextScreen(context),
                     ),
 
                     const SizedBox(height: 8),
