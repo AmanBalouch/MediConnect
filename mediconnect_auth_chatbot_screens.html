@@ -1,0 +1,557 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --teal:#1D9E75;--teal-l:#E1F5EE;--teal-d:#0F6E56;--teal-m:#5DCAA5;
+    --blue:#378ADD;--blue-l:#E6F1FB;--blue-d:#185FA5;
+    --text:#1a1a2e;--text2:#6b7280;--text3:#9ca3af;
+    --bg:#f0f4f8;--card:#ffffff;--border:#e5e7eb;
+    --red:#E24B4A;--amber:#BA7517;--amber-l:#FAEEDA;
+    font-family:'DM Sans',sans-serif;
+  }
+  .wrap{padding:2rem 1rem 3rem;max-width:1200px;margin:0 auto;background:var(--bg);}
+  .section-label{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text2);text-transform:uppercase;margin-bottom:1rem;text-align:center;}
+  .screens-row{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem;}
+  .phone{width:220px;flex-shrink:0;background:#111827;border-radius:38px;padding:8px;box-shadow:0 8px 32px rgba(0,0,0,.25),0 0 0 1px #1f2937;}
+  .screen{background:var(--card);border-radius:32px;overflow:hidden;min-height:440px;display:flex;flex-direction:column;position:relative;}
+  .sbar{padding:10px 16px 4px;display:flex;justify-content:space-between;align-items:center;}
+  .sbar-t{font-size:9px;font-weight:600;color:var(--text2);}
+  .screen-lbl{font-size:9px;font-weight:600;color:var(--text2);text-align:center;margin-top:7px;letter-spacing:.05em;}
+
+  /* Splash / Onboarding */
+  .splash-bg{flex:1;background:linear-gradient(160deg,#0F6E56 0%,#1D9E75 45%,#5DCAA5 80%,#9FE1CB 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px 20px;position:relative;overflow:hidden;}
+  .splash-circle{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.12);}
+  .splash-logo{width:56px;height:56px;border-radius:18px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:14px;border:2px solid rgba(255,255,255,.35);}
+  .splash-logo svg{width:28px;height:28px;fill:white;}
+  .splash-title{font-size:20px;font-weight:600;color:#fff;text-align:center;line-height:1.2;margin-bottom:6px;}
+  .splash-sub{font-size:9.5px;color:rgba(255,255,255,.75);text-align:center;line-height:1.5;margin-bottom:24px;}
+  .splash-btn{background:#fff;color:var(--teal-d);border-radius:14px;padding:11px 28px;font-size:11px;font-weight:600;margin-bottom:8px;width:100%;text-align:center;}
+  .splash-btn2{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:14px;padding:11px 28px;font-size:11px;font-weight:500;width:100%;text-align:center;}
+  .splash-foot{font-size:8px;color:rgba(255,255,255,.5);margin-top:12px;text-align:center;}
+
+  /* Login screen */
+  .login-hdr{background:linear-gradient(135deg,#0F6E56 0%,#1D9E75 100%);padding:20px 16px 28px;border-radius:0 0 24px 24px;margin-bottom:4px;}
+  .login-hdr h3{font-size:16px;font-weight:600;color:#fff;margin-bottom:2px;}
+  .login-hdr p{font-size:9px;color:rgba(255,255,255,.75);}
+  .form-area{padding:14px 16px 10px;flex:1;display:flex;flex-direction:column;gap:0;}
+  .field-lbl{font-size:8.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
+  .field{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:9px 11px;font-size:9px;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .field svg{width:11px;height:11px;fill:var(--text3);flex-shrink:0;}
+  .field span{color:var(--text2);}
+  .field-cursor{color:var(--teal);font-weight:500;}
+  .forgot{font-size:8px;color:var(--teal);text-align:right;margin:-6px 0 10px;}
+  .primary-btn{background:var(--teal);color:#fff;border-radius:12px;padding:11px;text-align:center;font-size:10px;font-weight:600;}
+  .divider{display:flex;align-items:center;gap:8px;margin:10px 0;}
+  .divider-line{flex:1;height:1px;background:var(--border);}
+  .divider span{font-size:8px;color:var(--text3);}
+  .social-row{display:flex;gap:6px;}
+  .social-btn{flex:1;border:1px solid var(--border);border-radius:10px;padding:8px;display:flex;align-items:center;justify-content:center;gap:5px;font-size:8.5px;color:var(--text2);}
+  .social-icon{width:14px;height:14px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;}
+  .foot-link{font-size:8px;color:var(--text2);text-align:center;margin-top:8px;}
+  .foot-link a{color:var(--teal);font-weight:500;}
+
+  /* Role selector */
+  .role-hdr{padding:16px 16px 10px;}
+  .role-hdr h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+  .role-hdr p{font-size:8.5px;color:var(--text2);}
+  .role-card{border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;}
+  .role-card.sel{border-color:var(--teal);background:var(--teal-l);}
+  .role-card.sel-b{border-color:var(--blue);background:var(--blue-l);}
+  .role-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .role-icon.g{background:var(--teal-l);}
+  .role-icon.b{background:var(--blue-l);}
+  .role-info h4{font-size:10px;font-weight:600;color:var(--text);margin-bottom:2px;}
+  .role-info p{font-size:8px;color:var(--text2);}
+  .role-radio{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);margin-left:auto;flex-shrink:0;}
+  .role-radio.sel{border-color:var(--teal);background:var(--teal);}
+  .role-radio.sel-b{border-color:var(--blue);background:var(--blue);}
+
+  /* Signup */
+  .signup-hdr{background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%);padding:20px 16px 24px;border-radius:0 0 24px 24px;margin-bottom:4px;}
+  .signup-hdr h3{font-size:15px;font-weight:600;color:#fff;margin-bottom:2px;}
+  .signup-hdr p{font-size:9px;color:rgba(255,255,255,.75);}
+  .step-row{display:flex;align-items:center;gap:0;margin-bottom:12px;}
+  .step-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:600;flex-shrink:0;}
+  .step-dot.done{background:var(--teal);color:#fff;}
+  .step-dot.active{background:var(--blue);color:#fff;}
+  .step-dot.idle{background:var(--border);color:var(--text3);}
+  .step-line{flex:1;height:1.5px;}
+  .step-line.done{background:var(--teal);}
+  .step-line.idle{background:var(--border);}
+
+  /* Chatbot full screen */
+  .chat-hdr{background:linear-gradient(135deg,#0C447C 0%,#185FA5 100%);padding:0 14px 12px;}
+  .chat-hdr-inner{display:flex;align-items:center;gap:8px;}
+  .ai-avatar{width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(255,255,255,.3);}
+  .ai-status{display:flex;align-items:center;gap:4px;}
+  .online-dot{width:6px;height:6px;border-radius:50%;background:#5DCAA5;}
+  .chat-scroll{flex:1;background:#f0f4f8;padding:10px 11px;display:flex;flex-direction:column;gap:7px;overflow:hidden;}
+  .msg-row{display:flex;gap:6px;align-items:flex-end;}
+  .msg-row.user{flex-direction:row-reverse;}
+  .bot-ava{width:20px;height:20px;border-radius:6px;background:var(--blue-l);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .bubble{max-width:78%;padding:8px 10px;font-size:8.5px;line-height:1.45;}
+  .bubble.bot{background:#fff;border:1px solid var(--border);border-radius:12px 12px 12px 3px;color:var(--text);}
+  .bubble.user{background:var(--teal);color:#fff;border-radius:12px 12px 3px 12px;}
+  .bubble.suggest{background:var(--blue-l);border:1px solid #B5D4F4;border-radius:12px 12px 12px 3px;color:var(--blue-d);}
+  .bubble.warn{background:#FAEEDA;border:1px solid #FAC775;border-radius:12px 12px 12px 3px;color:var(--amber);}
+  .time-stamp{font-size:7px;color:var(--text3);margin-top:2px;text-align:right;}
+  .time-stamp.l{text-align:left;}
+  .typing{display:flex;gap:3px;align-items:center;padding:8px 10px;background:#fff;border-radius:12px;border:1px solid var(--border);width:40px;}
+  .typing span{width:4px;height:4px;border-radius:50%;background:var(--text3);}
+  .doc-suggestion{background:#fff;border:1px solid var(--border);border-radius:12px;padding:8px 10px;margin-top:2px;}
+  .doc-sug-row{display:flex;align-items:center;gap:7px;}
+  .doc-sug-ava{width:28px;height:28px;border-radius:8px;background:var(--teal-l);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--teal-d);}
+  .doc-sug-info h5{font-size:9px;font-weight:600;color:var(--text);}
+  .doc-sug-info p{font-size:7.5px;color:var(--text2);}
+  .book-mini{background:var(--teal);color:#fff;border-radius:6px;padding:3px 7px;font-size:7.5px;font-weight:600;margin-left:auto;flex-shrink:0;}
+  .chip-row{display:flex;gap:4px;flex-wrap:wrap;padding:6px 11px;background:#f0f4f8;}
+  .qchip{background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 9px;font-size:8px;color:var(--text2);}
+  .qchip.teal{background:var(--teal-l);border-color:#9FE1CB;color:var(--teal-d);}
+  .chat-bar{background:#fff;border-top:1px solid var(--border);padding:8px 10px;display:flex;gap:6px;align-items:center;}
+  .attach-btn{width:26px;height:26px;border-radius:8px;background:var(--teal-l);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .chat-inp{flex:1;background:#f8fafc;border:1px solid var(--border);border-radius:20px;padding:6px 10px;font-size:8.5px;color:var(--text2);}
+  .send-btn{width:26px;height:26px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .condition-pill{display:inline-block;background:var(--teal-l);border:1px solid #9FE1CB;border-radius:20px;padding:2px 7px;font-size:7.5px;color:var(--teal-d);font-weight:500;margin:1px;}
+  .condition-pill.warn{background:var(--amber-l);border-color:#FAC775;color:var(--amber);}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">MediConnect additional screens — splash, role selection, login, signup, and AI chatbot full view</h2>
+
+<p class="section-label">MediConnect · Auth & Chatbot Screens</p>
+
+<div class="screens-row">
+
+  <!-- Screen 1: Splash / Welcome -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div style="background:#111;padding:10px 16px 4px;display:flex;justify-content:space-between;">
+        <span class="sbar-t" style="color:#555;">9:41</span>
+        <span class="sbar-t" style="color:#555;">●●●</span>
+      </div>
+      <div class="splash-bg">
+        <div class="splash-circle" style="width:200px;height:200px;top:-60px;right:-60px;"></div>
+        <div class="splash-circle" style="width:120px;height:120px;bottom:40px;left:-40px;"></div>
+        <div class="splash-circle" style="width:80px;height:80px;bottom:80px;right:20px;"></div>
+        <div class="splash-logo">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </div>
+        <div class="splash-title">Your Health,<br>Reimagined</div>
+        <div class="splash-sub">Connect with top doctors, get AI-powered symptom analysis, and consult from anywhere in Pakistan.</div>
+        <div class="splash-btn">Get Started</div>
+        <div class="splash-btn2">I already have an account</div>
+        <div class="splash-foot">By continuing you agree to our Terms & Privacy Policy</div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">Welcome / Splash</div>
+  </div>
+
+  <!-- Screen 2: Choose Role -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div class="sbar"><span class="sbar-t">9:41</span></div>
+      <div style="background:linear-gradient(135deg,#0F6E56,#1D9E75);padding:18px 16px 22px;border-radius:0 0 24px 24px;margin-bottom:6px;">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:16px;">🏥</div>
+        <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:3px;">Who are you?</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.75);">Select your role to personalize your experience</div>
+      </div>
+      <div style="padding:12px 16px;flex:1;">
+        <div class="role-card sel">
+          <div class="role-icon g">🩺</div>
+          <div class="role-info">
+            <h4>I'm a Patient</h4>
+            <p>Find doctors, book consultations, use AI chatbot</p>
+          </div>
+          <div class="role-radio sel"></div>
+        </div>
+        <div class="role-card">
+          <div class="role-icon b">👨‍⚕️</div>
+          <div class="role-info">
+            <h4>I'm a Doctor</h4>
+            <p>Manage appointments, set fees, view patients</p>
+          </div>
+          <div class="role-radio"></div>
+        </div>
+        <div style="background:var(--teal-l);border-radius:12px;padding:10px;margin:10px 0;display:flex;gap:8px;align-items:center;">
+          <span style="font-size:14px;">✅</span>
+          <div>
+            <p style="font-size:8.5px;font-weight:600;color:var(--teal-d);">Patient selected</p>
+            <p style="font-size:7.5px;color:var(--text2);">You'll get access to doctor search, AI chatbot & secure payments.</p>
+          </div>
+        </div>
+        <div class="primary-btn" style="margin-top:4px;">Continue as Patient →</div>
+        <div class="foot-link" style="margin-top:8px;">Already registered? <a>Log in</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">Role Selection</div>
+  </div>
+
+  <!-- Screen 3: Login -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div class="sbar"><span class="sbar-t">9:41</span></div>
+      <div class="login-hdr">
+        <div style="font-size:20px;margin-bottom:8px;">👋</div>
+        <h3>Welcome back!</h3>
+        <p>Sign in to continue to MediConnect</p>
+      </div>
+      <div class="form-area">
+        <div class="field-lbl">Email or phone number</div>
+        <div class="field">
+          <svg viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg>
+          <span class="field-cursor">ahmed@email.com<span style="border-left:1.5px solid var(--teal);margin-left:1px;">&nbsp;</span></span>
+        </div>
+        <div class="field-lbl">Password</div>
+        <div class="field">
+          <svg viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+          <span>••••••••</span>
+        </div>
+        <div class="forgot">Forgot password?</div>
+        <div class="primary-btn">Sign In</div>
+        <div class="divider"><div class="divider-line"></div><span>or continue with</span><div class="divider-line"></div></div>
+        <div class="social-row">
+          <div class="social-btn"><div class="social-icon" style="background:#ea4335;color:#fff;">G</div>Google</div>
+          <div class="social-btn"><div class="social-icon" style="background:#1877f2;color:#fff;">f</div>Facebook</div>
+        </div>
+        <div class="foot-link">Don't have an account? <a>Sign up</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">Login</div>
+  </div>
+
+  <!-- Screen 4: Sign Up -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div class="sbar"><span class="sbar-t">9:41</span></div>
+      <div class="signup-hdr">
+        <h3>Create account</h3>
+        <p>Join MediConnect as a patient</p>
+        <div class="step-row" style="margin-top:12px;">
+          <div class="step-dot done">✓</div>
+          <div class="step-line done"></div>
+          <div class="step-dot active">2</div>
+          <div class="step-line idle"></div>
+          <div class="step-dot idle">3</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;">
+          <span style="font-size:7.5px;color:rgba(255,255,255,.6);">Role</span>
+          <span style="font-size:7.5px;color:rgba(255,255,255,.9);font-weight:500;">Personal info</span>
+          <span style="font-size:7.5px;color:rgba(255,255,255,.5);">Verify</span>
+        </div>
+      </div>
+      <div class="form-area" style="padding-top:10px;">
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;">
+            <div class="field-lbl">First name</div>
+            <div class="field"><span style="color:var(--text);">Ahmed</span></div>
+          </div>
+          <div style="flex:1;">
+            <div class="field-lbl">Last name</div>
+            <div class="field"><span style="color:var(--text);">Khan</span></div>
+          </div>
+        </div>
+        <div class="field-lbl">Phone number</div>
+        <div class="field">
+          <span style="color:var(--text2);font-weight:500;padding-right:5px;border-right:1px solid var(--border);margin-right:3px;">+92</span>
+          <span style="color:var(--text);">3XX-XXXXXXX</span>
+        </div>
+        <div class="field-lbl">Email address</div>
+        <div class="field">
+          <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:var(--text3);"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Z"/></svg>
+          <span style="color:var(--text);">ahmed@email.com</span>
+        </div>
+        <div class="field-lbl">Create password</div>
+        <div class="field" style="margin-bottom:4px;">
+          <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:var(--text3);"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+          <span>••••••••</span>
+          <div style="margin-left:auto;display:flex;gap:2px;">
+            <div style="width:14px;height:3px;border-radius:2px;background:var(--red);"></div>
+            <div style="width:14px;height:3px;border-radius:2px;background:var(--amber);"></div>
+            <div style="width:14px;height:3px;border-radius:2px;background:var(--teal);"></div>
+            <div style="width:14px;height:3px;border-radius:2px;background:var(--border);"></div>
+          </div>
+        </div>
+        <div style="font-size:7.5px;color:var(--teal);margin-bottom:8px;">Password strength: Good</div>
+        <div class="primary-btn" style="background:var(--blue);">Continue →</div>
+        <div class="foot-link">Already registered? <a>Log in</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">Sign Up</div>
+  </div>
+
+  <!-- Screen 5: OTP Verification -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div class="sbar"><span class="sbar-t">9:41</span></div>
+      <div style="flex:1;padding:16px;display:flex;flex-direction:column;">
+        <div style="text-align:center;margin:16px 0 20px;">
+          <div style="width:56px;height:56px;border-radius:18px;background:var(--teal-l);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;">📱</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">Verify your number</div>
+          <div style="font-size:8.5px;color:var(--text2);line-height:1.5;">We sent a 6-digit code to<br><strong style="color:var(--text);font-weight:500;">+92 300-XXXXXXX</strong></div>
+        </div>
+        <div style="display:flex;gap:7px;justify-content:center;margin-bottom:20px;">
+          <div style="width:34px;height:40px;border:2px solid var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--text);">4</div>
+          <div style="width:34px;height:40px;border:2px solid var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--text);">7</div>
+          <div style="width:34px;height:40px;border:2px solid var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--text);">2</div>
+          <div style="width:34px;height:40px;border:2px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <span style="width:2px;height:18px;background:var(--teal);display:block;border-radius:1px;"></span>
+          </div>
+          <div style="width:34px;height:40px;border:1px solid var(--border);border-radius:10px;background:#f8fafc;"></div>
+          <div style="width:34px;height:40px;border:1px solid var(--border);border-radius:10px;background:#f8fafc;"></div>
+        </div>
+        <div style="background:var(--teal-l);border-radius:12px;padding:10px;display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <span style="font-size:12px;">⏱️</span>
+          <div>
+            <p style="font-size:8.5px;font-weight:600;color:var(--teal-d);">Code expires in 02:34</p>
+            <p style="font-size:7.5px;color:var(--text2);">Didn't receive it? <span style="color:var(--teal);">Resend code</span></p>
+          </div>
+        </div>
+        <div class="primary-btn">Verify & Continue</div>
+        <div style="margin-top:14px;">
+          <div style="font-size:8.5px;font-weight:600;color:var(--text);margin-bottom:8px;">Step 3 of 3 — Almost done!</div>
+          <div style="display:flex;gap:5px;">
+            <div style="height:4px;flex:1;border-radius:2px;background:var(--teal);"></div>
+            <div style="height:4px;flex:1;border-radius:2px;background:var(--teal);"></div>
+            <div style="height:4px;flex:1;border-radius:2px;background:var(--teal);opacity:.4;"></div>
+          </div>
+        </div>
+        <div class="foot-link" style="margin-top:10px;">Wrong number? <a>Change it</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">OTP Verification</div>
+  </div>
+
+</div>
+
+<!-- AI Chatbot Full Row -->
+<p class="section-label" style="margin-top:1rem;">AI Chatbot — Full Chat Experience</p>
+<div class="screens-row">
+
+  <!-- Chat Screen 1: Symptom Entry -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div class="chat-hdr">
+        <div class="sbar" style="background:transparent;padding:10px 0 6px;"><span class="sbar-t" style="color:rgba(255,255,255,.6);">9:41</span></div>
+        <div class="chat-hdr-inner">
+          <div class="ai-avatar" style="font-size:14px;">🤖</div>
+          <div style="flex:1;">
+            <div style="font-size:11px;font-weight:600;color:#fff;">MediBot AI</div>
+            <div class="ai-status"><div class="online-dot"></div><span style="font-size:8px;color:rgba(255,255,255,.7);">Online · Symptom Checker</span></div>
+          </div>
+          <div style="width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;">⋮</div>
+        </div>
+      </div>
+      <div class="chat-scroll">
+        <div style="text-align:center;margin:4px 0;">
+          <span style="background:rgba(0,0,0,.06);border-radius:10px;padding:3px 9px;font-size:7.5px;color:var(--text3);">Today</span>
+        </div>
+        <div class="msg-row">
+          <div class="bot-ava"><span style="font-size:9px;">🤖</span></div>
+          <div>
+            <div class="bubble bot">Hi! I'm MediBot 👋 I can help you understand your symptoms and find the right doctor. What are you experiencing today?</div>
+            <div class="time-stamp l">9:40 AM</div>
+          </div>
+        </div>
+        <div class="msg-row user">
+          <div>
+            <div class="bubble user">I have a severe headache and my vision is blurry since yesterday evening</div>
+            <div class="time-stamp">9:41 AM ✓✓</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="bot-ava"><span style="font-size:9px;">🤖</span></div>
+          <div>
+            <div class="bubble bot">Got it. Let me ask a few more questions to better understand. How would you rate the headache intensity?</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;padding-left:26px;">
+          <div style="background:var(--teal-l);border:1px solid #9FE1CB;border-radius:20px;padding:4px 9px;font-size:8px;color:var(--teal-d);font-weight:500;">😖 Severe (8-10)</div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 9px;font-size:8px;color:var(--text2);">😣 Moderate (5-7)</div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 9px;font-size:8px;color:var(--text2);">😐 Mild (1-4)</div>
+        </div>
+        <div class="typing">
+          <span style="animation:none;background:#ccc;"></span>
+          <span style="background:#bbb;"></span>
+          <span style="background:#aaa;"></span>
+        </div>
+      </div>
+      <div class="chip-row">
+        <div class="qchip teal">Headache</div>
+        <div class="qchip teal">Blurred vision</div>
+        <div class="qchip">+ Add symptom</div>
+      </div>
+      <div class="chat-bar">
+        <div class="attach-btn"><svg width="11" height="11" viewBox="0 0 16 16" fill="var(--teal-d)"><path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/></svg></div>
+        <div class="chat-inp">Describe your symptoms...</div>
+        <div class="send-btn"><svg width="10" height="10" viewBox="0 0 16 16" fill="white"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.431 1.178Z"/></svg></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">Chat — Symptom Entry</div>
+  </div>
+
+  <!-- Chat Screen 2: AI Analysis Result -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div class="chat-hdr">
+        <div class="sbar" style="background:transparent;padding:10px 0 6px;"><span class="sbar-t" style="color:rgba(255,255,255,.6);">9:43</span></div>
+        <div class="chat-hdr-inner">
+          <div class="ai-avatar" style="font-size:14px;">🤖</div>
+          <div style="flex:1;">
+            <div style="font-size:11px;font-weight:600;color:#fff;">MediBot AI</div>
+            <div class="ai-status"><div class="online-dot"></div><span style="font-size:8px;color:rgba(255,255,255,.7);">Analysis complete</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-scroll">
+        <div class="msg-row user">
+          <div>
+            <div class="bubble user">Severe, I'd say 8 out of 10. Also feeling nauseous.</div>
+            <div class="time-stamp">9:42 AM ✓✓</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="bot-ava"><span style="font-size:9px;">🤖</span></div>
+          <div>
+            <div class="bubble suggest">
+              <div style="font-size:8.5px;font-weight:600;margin-bottom:5px;">🔍 AI Analysis complete</div>
+              <div style="margin-bottom:4px;font-size:8px;">Based on your symptoms, here are possible conditions:</div>
+              <div style="margin-bottom:3px;">
+                <span class="condition-pill">Migraine (72%)</span>
+                <span class="condition-pill warn">Hypertension</span>
+                <span class="condition-pill">Eye strain</span>
+              </div>
+              <div style="border-top:1px solid #B5D4F4;margin:6px 0;"></div>
+              <div style="font-size:8px;font-weight:600;margin-bottom:3px;">⚕️ Recommended specialists:</div>
+              <div style="font-size:8px;">→ Neurologist (primary)<br>→ Ophthalmologist</div>
+            </div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="bot-ava"><span style="font-size:9px;">🤖</span></div>
+          <div>
+            <div class="bubble warn">⚠️ Your symptoms may indicate elevated blood pressure. Please seek medical attention promptly.</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="bot-ava"><span style="font-size:9px;">🤖</span></div>
+          <div>
+            <div class="bubble bot">I found 3 neurologists available today. Would you like to book now?</div>
+          </div>
+        </div>
+        <div style="padding-left:26px;display:flex;flex-direction:column;gap:5px;">
+          <div class="doc-suggestion">
+            <div class="doc-sug-row">
+              <div class="doc-sug-ava">SA</div>
+              <div class="doc-sug-info"><h5>Dr. Sana Akhtar</h5><p>Neurologist · ★ 4.8 · Rs.1200</p></div>
+              <div class="book-mini">Book →</div>
+            </div>
+          </div>
+          <div class="doc-suggestion">
+            <div class="doc-sug-row">
+              <div class="doc-sug-ava" style="background:var(--blue-l);color:var(--blue-d);">RB</div>
+              <div class="doc-sug-info"><h5>Dr. Rizwan Butt</h5><p>Neurologist · ★ 4.7 · Rs.900</p></div>
+              <div class="book-mini">Book →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-bar">
+        <div class="attach-btn"><svg width="11" height="11" viewBox="0 0 16 16" fill="var(--teal-d)"><path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/></svg></div>
+        <div class="chat-inp">Ask a follow-up question...</div>
+        <div class="send-btn"><svg width="10" height="10" viewBox="0 0 16 16" fill="white"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.431 1.178Z"/></svg></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">Chat — AI Analysis</div>
+  </div>
+
+  <!-- Chat Screen 3: Doctor Chat / Consultation -->
+  <div>
+  <div class="phone">
+    <div class="screen">
+      <div style="background:linear-gradient(135deg,#0F6E56,#1D9E75);padding:0 14px 12px;">
+        <div class="sbar" style="background:transparent;padding:10px 0 6px;"><span class="sbar-t" style="color:rgba(255,255,255,.6);">9:55</span></div>
+        <div class="chat-hdr-inner">
+          <div style="position:relative;">
+            <div class="ai-avatar" style="font-size:13px;font-weight:700;background:rgba(255,255,255,.25);">DR</div>
+            <div style="position:absolute;bottom:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#5DCAA5;border:1.5px solid white;"></div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:11px;font-weight:600;color:#fff;">Dr. Sana Akhtar</div>
+            <div class="ai-status"><div class="online-dot"></div><span style="font-size:8px;color:rgba(255,255,255,.7);">Neurologist · In consultation</span></div>
+          </div>
+          <div style="display:flex;gap:5px;">
+            <div style="width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;">📞</div>
+            <div style="width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;">📹</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-scroll">
+        <div style="text-align:center;margin:4px 0;">
+          <span style="background:rgba(0,0,0,.06);border-radius:10px;padding:3px 9px;font-size:7.5px;color:var(--text3);">Consultation started</span>
+        </div>
+        <div class="msg-row">
+          <div class="bot-ava" style="background:var(--teal-l);"><span style="font-size:8px;font-weight:700;color:var(--teal-d);">DR</span></div>
+          <div>
+            <div class="bubble bot">Hello Ahmed! I've reviewed your symptoms from MediBot. The headache + blurred vision combination needs careful evaluation. Can you tell me if you've had similar episodes before?</div>
+            <div class="time-stamp l">9:55 AM</div>
+          </div>
+        </div>
+        <div class="msg-row user">
+          <div>
+            <div class="bubble user">Yes, I had a similar headache 2 months ago but not as severe. I don't have any chronic conditions.</div>
+            <div class="time-stamp">9:56 AM ✓✓</div>
+          </div>
+        </div>
+        <div class="msg-row">
+          <div class="bot-ava" style="background:var(--teal-l);"><span style="font-size:8px;font-weight:700;color:var(--teal-d);">DR</span></div>
+          <div>
+            <div class="bubble bot">Understood. I'm prescribing you a pain reliever and recommending a blood pressure check. Please avoid screens for today.</div>
+          </div>
+        </div>
+        <div style="padding-left:26px;">
+          <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:9px;margin-top:4px;">
+            <div style="font-size:8.5px;font-weight:600;color:var(--text);margin-bottom:6px;">📄 Prescription</div>
+            <div style="background:var(--teal-l);border-radius:8px;padding:7px;margin-bottom:4px;">
+              <p style="font-size:8px;font-weight:600;color:var(--teal-d);">Sumatriptan 50mg</p>
+              <p style="font-size:7.5px;color:var(--text2);">1 tablet · When headache starts · Max 2/day</p>
+            </div>
+            <div style="background:#f8fafc;border-radius:8px;padding:7px;">
+              <p style="font-size:8px;font-weight:600;color:var(--text);">Paracetamol 500mg</p>
+              <p style="font-size:7.5px;color:var(--text2);">1 tablet · Every 6 hours · 3 days</p>
+            </div>
+            <div style="display:flex;gap:5px;margin-top:7px;">
+              <div style="flex:1;background:var(--teal);color:#fff;border-radius:7px;padding:5px;text-align:center;font-size:7.5px;font-weight:600;">⬇ Download PDF</div>
+              <div style="flex:1;background:var(--teal-l);color:var(--teal-d);border-radius:7px;padding:5px;text-align:center;font-size:7.5px;font-weight:600;">📋 Save</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-bar">
+        <div class="attach-btn"><svg width="11" height="11" viewBox="0 0 16 16" fill="var(--teal-d)"><path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z"/></svg></div>
+        <div class="chat-inp">Reply to Dr. Sana...</div>
+        <div class="send-btn" style="background:var(--teal-d);"><svg width="10" height="10" viewBox="0 0 16 16" fill="white"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.431 1.178Z"/></svg></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-lbl">Doctor Consultation Chat</div>
+  </div>
+
+</div>
+
+<p style="text-align:center;font-size:11px;color:var(--text3);margin-top:0;">Flutter · Firebase Auth · OTP via SMS · AI Chatbot · End-to-End Encrypted Consultation</p>
+</div>
