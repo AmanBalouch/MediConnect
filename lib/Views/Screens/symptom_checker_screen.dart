@@ -14,7 +14,7 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
   final _messages = <Map<String, String>>[];
   bool _loading = false;
 
-  final GeminiService _service = GeminiService(
+  final GrokService _service = GrokService(
     'gsk_iI8VZGK8vWB89sYZMz6uWGdyb3FYUEXcdEXrnPfyz9VPBmSgf3mtdone',
   );
 
