@@ -8,6 +8,7 @@ import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
