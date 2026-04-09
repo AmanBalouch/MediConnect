@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mediconnectcode/services/gemini_service.dart';
+import 'package:mediconnectcode/services/grok_service.dart';
 
 class SymptomCheckerScreen extends StatefulWidget {
   const SymptomCheckerScreen({super.key});
