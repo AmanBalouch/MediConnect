@@ -1,6 +1,10 @@
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class GeminiService {
+  final String apiKey;
+  final List<Map<String, String>> _history = [];
+
   static const _systemPrompt = '''
 You are a medical symptom checker AI assistant.
 - Ask the user clarifying questions about their symptoms one at a time
@@ -10,22 +14,34 @@ You are a medical symptom checker AI assistant.
 - Never give a definitive diagnosis
 ''';
 
-  late final GenerativeModel _model;
-  late final ChatSession _chat;
-
-  GeminiService(String apiKey) {
-    _model = GenerativeModel(
-      model: 'gemini-1.5-flash',
-      apiKey: apiKey,
-      systemInstruction: Content.system(_systemPrompt),
-    );
-    _chat = _model.startChat();
-  }
+  GeminiService(this.apiKey);
 
   Future<String> sendMessage(String userMessage) async {
-    final response = await _chat.sendMessage(
-      Content.text(userMessage),
+    _history.add({'role': 'user', 'content': userMessage});
+
+    final response = await http.post(
+      Uri.parse('https://api.groq.com/openai/v1/chat/completions'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey',
+      },
+      body: jsonEncode({
+        'model': 'llama-3.3-70b-versatile',
+        'messages': [
+          {'role': 'system', 'content': _systemPrompt},
+          ..._history,
+        ],
+        'max_tokens': 1024,
+      }),
     );
-    return response.text ?? 'No response received';
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final reply = data['choices'][0]['message']['content'];
+      _history.add({'role': 'assistant', 'content': reply});
+      return reply;
+    } else {
+      return 'Error: ${response.body}';
+    }
   }
 }
