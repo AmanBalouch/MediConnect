@@ -14,9 +14,8 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
   final _messages = <Map<String, String>>[];
   bool _loading = false;
 
-  final GrokService _service = GrokService(
-    'gsk_iI8VZGK8vWB89sYZMz6uWGdyb3FYUEXcdEXrnPfyz9VPBmSgf3mtdone',
-  );
+  // No need to pass API key anymore - it's inside GrokService
+  final GrokService _service = GrokService();
 
   @override
   void initState() {
@@ -24,7 +23,7 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
     _messages.add({
       'role': 'ai',
       'text': 'Hello! I am your medical assistant. You can ask me anything about your health, describe your symptoms, or ask general medical questions. How can I help you today?',
-       });
+    });
   }
 
   Future<void> _send() async {

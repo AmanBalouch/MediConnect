@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mediconnectcode/Views/Screens/welcome_screen.dart';
 import 'package:mediconnectcode/Views/Screens/role_selection_screen.dart';
@@ -8,7 +9,7 @@ import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
+  // await dotenv.load(fileName: '.env');
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -21,12 +22,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MediConnect',
       theme: AppTheme.lightTheme,
-      initialRoute: '/welcome',
+      initialRoute: '/symptom-checker',
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/role-selection': (context) => const RoleSelectionScreen(),
         '/symptom-checker': (context) => const SymptomCheckerScreen(),
-      
       },
     );
   }

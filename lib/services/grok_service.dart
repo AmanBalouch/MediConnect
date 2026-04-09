@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class GrokService {
-  final String apiKey;
+  final String apiKey = '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';
   final List<Map<String, String>> _history = [];
 
   static const _systemPrompt = '''
@@ -18,7 +18,7 @@ You are a helpful medical assistant chatbot. You can:
 - Be friendly, helpful and conversational
 ''';
 
-  GrokService(this.apiKey);
+  GrokService(); // Empty constructor since apiKey is hardcoded
 
   Future<String> sendMessage(String userMessage) async {
     _history.add({'role': 'user', 'content': userMessage});
