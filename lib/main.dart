@@ -1,15 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:mediconnectcode/ViewModels/signup_viewmodel.dart';
 import 'package:mediconnectcode/Views/Screens/welcome_screen.dart';
 import 'package:mediconnectcode/Views/Screens/role_selection_screen.dart';
-import 'package:mediconnectcode/Views/Screens/signup_screen.dart';
+import 'package:mediconnectcode/Views/Screens/otp_verification_screen.dart';
 import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: '.env');
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -19,15 +19,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MediConnect',
-      theme: AppTheme.lightTheme,
-      initialRoute: '/symptom-checker',
-      routes: {
-        '/welcome': (context) => const WelcomeScreen(),
-        '/role-selection': (context) => const RoleSelectionScreen(),
-        '/symptom-checker': (context) => const SymptomCheckerScreen(),
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SignupViewModel()),
+      ],
+      child: MaterialApp(
+        title: 'MediConnect',
+        theme: AppTheme.lightTheme,
+        initialRoute: '/welcome',
+        routes: {
+          '/welcome': (context) => const WelcomeScreen(),
+          '/role-selection': (context) => const RoleSelectionScreen(),
+          '/otp-verification': (context) => const OTPVerificationScreen(phoneNumber: ''),
+          '/symptom-checker': (context) => const SymptomCheckerScreen(),
+        },
+      ),
     );
   }
 }

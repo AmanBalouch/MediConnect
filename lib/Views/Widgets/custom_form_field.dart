@@ -14,6 +14,7 @@ class CustomFormField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final Widget? suffix;
+  final String? Function(String?)? validator;
 
   const CustomFormField({
     Key? key,
@@ -24,6 +25,7 @@ class CustomFormField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.suffix,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -46,6 +48,7 @@ class CustomFormField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          validator: validator,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
               ),
           decoration: InputDecoration(
@@ -101,4 +104,3 @@ class CustomFormField extends StatelessWidget {
     );
   }
 }
-
