@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mediconnectcode/Views/Screens/welcome_screen.dart';
 import 'package:mediconnectcode/Views/Screens/role_selection_screen.dart';
 import 'package:mediconnectcode/Views/Screens/signup_screen.dart';
+import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/welcome': (context) => const WelcomeScreen(),
         '/role-selection': (context) => const RoleSelectionScreen(),
+        '/symptom-checker': (context) => const SymptomCheckerScreen(),
       },
     );
   }
