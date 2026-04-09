@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/role-selection': (context) => const RoleSelectionScreen(),
         '/symptom-checker': (context) => const SymptomCheckerScreen(),
+      
       },
     );
   }
