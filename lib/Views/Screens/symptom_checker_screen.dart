@@ -23,8 +23,8 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
     super.initState();
     _messages.add({
       'role': 'ai',
-      'text': 'Hello! I am your hospital triage assistant. I will ask you a few simple questions to understand your condition and recommend the right doctor for you.\n\nWhat is your full name and age?',
-    });
+      'text': 'Hello! I am your medical assistant. You can ask me anything about your health, describe your symptoms, or ask general medical questions. How can I help you today?',
+       });
   }
 
   Future<void> _send() async {
