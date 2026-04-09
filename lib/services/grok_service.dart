@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class GeminiService {
+class GrokService {
   final String apiKey;
   final List<Map<String, String>> _history = [];
 
@@ -14,7 +14,7 @@ You are a medical symptom checker AI assistant.
 - Never give a definitive diagnosis
 ''';
 
-  GeminiService(this.apiKey);
+  GrokService(this.apiKey);
 
   Future<String> sendMessage(String userMessage) async {
     _history.add({'role': 'user', 'content': userMessage});
