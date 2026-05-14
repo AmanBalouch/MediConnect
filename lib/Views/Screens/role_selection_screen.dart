@@ -48,10 +48,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primaryTealDark,
-                    AppTheme.primaryTeal,
-                  ],
+                  colors: [AppTheme.primaryTealDark, AppTheme.primaryTeal],
                 ),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(24),
@@ -69,10 +66,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       color: Colors.white.withValues(alpha: 0.2),
                     ),
                     child: const Center(
-                      child: Text(
-                        '🏥',
-                        style: TextStyle(fontSize: 30),
-                      ),
+                      child: Text('🏥', style: TextStyle(fontSize: 30)),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -81,9 +75,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   Text(
                     'Who are you?',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: Colors.white,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineLarge?.copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 3),
 
@@ -92,8 +86,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                     'Select your role to personalize your experience',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.75),
-                        ),
+                      color: Colors.white.withValues(alpha: 0.75),
+                    ),
                   ),
                 ],
               ),
@@ -102,14 +96,18 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             // Content Area
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 30,
+                ),
                 child: Column(
                   children: [
                     // Patient Role Card using RoleCard Widget
                     RoleCard(
                       icon: Icons.medical_services,
                       title: 'I\'m a Patient',
-                      description: 'Find doctors, book consultations, use AI chatbot',
+                      description:
+                          'Find doctors, book consultations, use AI chatbot',
                       isSelected: selectedRole == 'patient',
                       onTap: () => _selectRole('patient'),
                       iconColor: AppTheme.primaryTealLight,
@@ -122,7 +120,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                     RoleCard(
                       icon: Icons.person,
                       title: 'I\'m a Doctor',
-                      description: 'Manage appointments, set fees, view patients',
+                      description:
+                          'Manage appointments, set fees, view patients',
                       isSelected: selectedRole == 'doctor',
                       onTap: () => _selectRole('doctor'),
                       iconColor: AppTheme.primaryBlueLight,
@@ -141,10 +140,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Text(
-                              '✅',
-                              style: TextStyle(fontSize: 14),
-                            ),
+                            const Text('✅', style: TextStyle(fontSize: 14)),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Column(
@@ -152,7 +148,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                                 children: [
                                   Text(
                                     'Patient selected',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
                                           color: AppTheme.primaryTealDark,
                                           fontSize: 8.5,
                                           fontWeight: FontWeight.w600,
@@ -161,7 +158,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                                   const SizedBox(height: 2),
                                   Text(
                                     'You\'ll get access to doctor search, AI chatbot & secure payments.',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
                                           color: AppTheme.textSecondary,
                                           fontSize: 7.5,
                                         ),
@@ -187,13 +185,13 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
                     // Login Link
                     TextButton(
-                      onPressed: () => {},
+                      onPressed: () => {Navigator.pushNamed(context, "/login")},
                       child: Text(
                         'Already registered? Log in',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.textSecondary,
-                              fontSize: 10,
-                            ),
+                          color: AppTheme.textSecondary,
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   ],
@@ -205,5 +203,4 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
       ),
     );
   }
-
 }

@@ -8,3 +8,4 @@ export 'package:mediconnectcode/Views/Widgets/background_circle.dart';
 export 'package:mediconnectcode/Views/Widgets/role_card.dart';
 export 'package:mediconnectcode/Views/Widgets/step_indicator.dart';
 export 'package:mediconnectcode/Views/Widgets/custom_form_field.dart';
+export 'package:mediconnectcode/Views/Widgets/success_dialog.dart';

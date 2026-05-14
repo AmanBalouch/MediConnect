@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/Views/Widgets/index.dart';
 import 'package:provider/provider.dart';
 import 'package:mediconnectcode/ViewModels/signup_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/otp_viewmodel.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   final String phoneNumber;
 
-  const OTPVerificationScreen({
-    Key? key,
-    required this.phoneNumber,
-  }) : super(key: key);
+  const OTPVerificationScreen({Key? key, required this.phoneNumber})
+    : super(key: key);
 
   @override
   State<OTPVerificationScreen> createState() => _OTPVerificationScreenState();
 }
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   // 6 OTP input fields
   late List<TextEditingController> otpControllers;
   late List<FocusNode> focusNodes;
 
   // Timer variables
-  int timeLeft = 60;
+  int timeLeft = 300; // 5 minutes
   bool canResend = false;
 
   @override
@@ -31,6 +33,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     // Initialize OTP controllers
     otpControllers = List.generate(6, (_) => TextEditingController());
     focusNodes = List.generate(6, (_) => FocusNode());
+
+    // Send OTP via ViewModel when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final otpViewModel = Provider.of<OTPViewModel>(context, listen: false);
+      otpViewModel.sendOTP(widget.phoneNumber);
+    });
 
     // Start timer
     _startTimer();
@@ -84,62 +92,168 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     // Get all OTP values
     String otp = otpControllers.map((controller) => controller.text).join();
 
-    if (otp.length == 6) {
-      // Call ViewModel to create account
-      final viewModel = Provider.of<SignupViewModel>(context, listen: false);
+    if (otp.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter all 6 digits')),
+      );
+      return;
+    }
 
+    // Get OTP ViewModel
+    final otpViewModel = Provider.of<OTPViewModel>(context, listen: false);
+
+    // Verify OTP using ViewModel
+    final credential = await otpViewModel.verifyOTP(otp);
+
+    if (credential == null) {
+      // Show error from ViewModel
+      if (otpViewModel.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(otpViewModel.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    // OTP verified, now sign in with credential
+    await _signInAndCreateAccount(credential);
+  }
+
+  /// Sign in with phone credential and create account
+  Future<void> _signInAndCreateAccount(PhoneAuthCredential credential) async {
+    try {
       // Show loading indicator
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      // Try to create account after OTP verification
-      bool success = await viewModel.createAccountAfterOTPVerification();
+      // Sign in with phone credential
+      await _auth.signInWithCredential(credential);
+
+      print('Phone sign-in successful');
+
+      // Now create account in Firestore
+      final signupViewModel = Provider.of<SignupViewModel>(
+        context,
+        listen: false,
+      );
+      bool success = await signupViewModel.createAccountAfterOTPVerification();
 
       // Hide loading dialog
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
 
       if (success) {
-        // Account created successfully
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account created successfully!')),
-        );
+        // Account created successfully - Show success dialog
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => SuccessDialog(
+              title: 'Account Created!',
+              message:
+                  'Your account has been created successfully. Let\'s get you logged in!',
+              buttonLabel: 'OK',
+              icon: Icons.check_circle,
+              onButtonPressed: () {
+                // Close success dialog
+                Navigator.pop(context);
+                // Navigate to login screen
+                Navigator.of(context).pushReplacementNamed('/login');
+              },
+            ),
+          );
+        }
 
-        // Navigate to home or next screen
-        // TODO: Navigate to home screen or dashboard
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+        print('Account created successfully - navigating to login');
       } else {
         // Show error
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(viewModel.errorMessage ?? 'Verification failed')),
+          SnackBar(
+            content: Text(
+              signupViewModel.errorMessage ?? 'Failed to create account',
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
       }
-    } else {
+    } catch (e) {
+      if (mounted) Navigator.pop(context);
+
+      String errorMessage = 'Sign-in failed. Please try again.';
+      if (e is FirebaseAuthException) {
+        errorMessage = _getErrorMessage(e);
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter all 6 digits')),
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
       );
     }
   }
 
-  void _handleResend() {
-    // Reset OTP fields
-    for (var controller in otpControllers) {
-      controller.clear();
-    }
-    setState(() {
-      timeLeft = 154; // Reset timer to 2:34
-      canResend = false;
-    });
-    _startTimer();
+  void _handleResend() async {
+    // Get OTP ViewModel
+    final otpViewModel = Provider.of<OTPViewModel>(context, listen: false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('OTP resent to your number')),
-    );
-    // TODO: Call resend OTP API
+    // Resend OTP using ViewModel
+    bool success = await otpViewModel.resendOTP();
+
+    if (success) {
+      // Reset OTP fields
+      for (var controller in otpControllers) {
+        controller.clear();
+      }
+      setState(() {
+        timeLeft = 300; // Reset timer to 5 minutes
+        canResend = false;
+      });
+      _startTimer();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('OTP resent to your number'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      // Show error from ViewModel
+      if (otpViewModel.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(otpViewModel.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Get user-friendly error message from Firebase exception
+  String _getErrorMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-phone-number':
+        return 'Invalid phone number format.';
+      case 'missing-phone-number':
+        return 'Phone number is required.';
+      case 'invalid-verification-code':
+        return 'Invalid verification code. Please check and try again.';
+      case 'session-expired':
+        return 'Verification code has expired. Please request a new one.';
+      case 'too-many-requests':
+        return 'Too many verification attempts. Please try again later.';
+      case 'credential-already-in-use':
+        return 'This phone number is already linked to another account.';
+      case 'user-disabled':
+        return 'This user account has been disabled.';
+      case 'operation-not-allowed':
+        return 'Phone authentication is not enabled.';
+      default:
+        return 'Error: ${e.message}';
+    }
   }
 
   @override
@@ -154,7 +268,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             children: [
               // Header with back button (optional)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -177,7 +294,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
               // Main Content
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 child: Column(
                   children: [
                     // Icon
@@ -198,7 +318,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     // Title
                     Text(
                       'Verify your number',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
                             color: AppTheme.textPrimary,
                             fontWeight: FontWeight.w600,
                           ),
@@ -211,15 +332,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.textSecondary,
-                              fontSize: 9,
-                              height: 1.5,
-                            ),
+                          color: AppTheme.textSecondary,
+                          fontSize: 9,
+                          height: 1.5,
+                        ),
                         children: [
                           const TextSpan(text: 'We sent a 6-digit code to\n'),
                           TextSpan(
                             text: widget.phoneNumber,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
                                   color: AppTheme.textPrimary,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 9,
@@ -246,7 +368,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                               keyboardType: TextInputType.number,
                               maxLength: 1,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              style: Theme.of(context).textTheme.headlineMedium
+                                  ?.copyWith(
                                     color: AppTheme.textPrimary,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -320,7 +443,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                               children: [
                                 Text(
                                   'Code expires in ${_getFormattedTime()}',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
                                         color: AppTheme.primaryTealDark,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 9,
@@ -331,7 +455,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                                   onTap: canResend ? _handleResend : null,
                                   child: Text(
                                     "Didn't receive it? ${canResend ? 'Resend code' : 'Resend'}",
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
                                           color: AppTheme.textSecondary,
                                           fontSize: 8,
                                         ),
@@ -360,7 +485,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       children: [
                         Text(
                           'Step 3 of 3 — Almost done!',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: AppTheme.textPrimary,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
@@ -373,12 +499,16 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                             (index) => Expanded(
                               child: Container(
                                 height: 4,
-                                margin: EdgeInsets.only(right: index < 2 ? 5 : 0),
+                                margin: EdgeInsets.only(
+                                  right: index < 2 ? 5 : 0,
+                                ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
                                   color: index < 3
                                       ? AppTheme.primaryTeal
-                                      : AppTheme.primaryTeal.withValues(alpha: 0.3),
+                                      : AppTheme.primaryTeal.withValues(
+                                          alpha: 0.3,
+                                        ),
                                 ),
                               ),
                             ),
@@ -395,7 +525,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         onPressed: () => Navigator.pop(context),
                         child: Text(
                           'Wrong number? Change it',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: AppTheme.textSecondary,
                                 fontSize: 9,
                               ),
@@ -412,4 +543,3 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 }
-

@@ -35,6 +35,13 @@ class SignupViewModel extends ChangeNotifier {
   }
 
   // Method to create account after OTP verification
+  ///
+  /// Business Logic:
+  /// 1. Get current user from phone authentication
+  /// 2. Link email/password credential to phone-authenticated user
+  /// 3. Store user data in Firestore
+  /// 4. Clear pending data
+  ///
   Future<bool> createAccountAfterOTPVerification() async {
     if (_pendingSignupData == null) {
       _errorMessage = 'Signup data not found. Please try again.';
@@ -46,14 +53,33 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Create user with email and password
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: _pendingSignupData!['email'],
-        password: _pendingSignupData!['password'],
-      );
+      // Get current user (created by phone authentication)
+      final currentUser = _auth.currentUser;
 
-      // Get the user ID
-      String uid = userCredential.user!.uid;
+      if (currentUser == null) {
+        _errorMessage = 'User not authenticated. Please try again.';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      // Get the user ID from phone authentication
+      String uid = currentUser.uid;
+
+      // Link email/password credential to the phone-authenticated user
+      try {
+        final emailCredential = EmailAuthProvider.credential(
+          email: _pendingSignupData!['email'],
+          password: _pendingSignupData!['password'],
+        );
+
+        await currentUser.linkWithCredential(emailCredential);
+        print('Email/password credential linked successfully');
+      } catch (e) {
+        print('Error linking email/password: $e');
+        // If linking fails, we can still continue and store data
+        // User can use phone or email/password later
+      }
 
       // Store user data in Firestore
       await _firestore.collection('users').doc(uid).set({
@@ -62,6 +88,8 @@ class SignupViewModel extends ChangeNotifier {
         'phoneNumber': _pendingSignupData!['phoneNumber'],
         'role': _pendingSignupData!['role'],
         'createdAt': Timestamp.now(),
+        'phoneVerified': true,
+        'emailVerified': false,
       });
 
       // Clear pending data after successful signup
@@ -70,13 +98,8 @@ class SignupViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return true; // Success
-    } on FirebaseAuthException catch (e) {
-      _errorMessage = e.message ?? 'An error occurred';
-      _isLoading = false;
-      notifyListeners();
-      return false; // Failure
     } catch (e) {
-      _errorMessage = 'An unexpected error occurred';
+      _errorMessage = 'Failed to create account: ${e.toString()}';
       _isLoading = false;
       notifyListeners();
       return false;

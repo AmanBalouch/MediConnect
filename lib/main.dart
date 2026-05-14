@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:mediconnectcode/ViewModels/signup_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/otp_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
 import 'package:mediconnectcode/Views/Screens/welcome_screen.dart';
 import 'package:mediconnectcode/Views/Screens/role_selection_screen.dart';
 import 'package:mediconnectcode/Views/Screens/otp_verification_screen.dart';
+import 'package:mediconnectcode/Views/Screens/login_screen.dart';
+import 'package:mediconnectcode/Views/Screens/forgot_password_screen.dart';
 import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
 
 void main() async {
@@ -22,6 +26,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SignupViewModel()),
+        ChangeNotifierProvider(create: (_) => OTPViewModel()),
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
       ],
       child: MaterialApp(
         title: 'MediConnect',
@@ -30,7 +36,10 @@ class MyApp extends StatelessWidget {
         routes: {
           '/welcome': (context) => const WelcomeScreen(),
           '/role-selection': (context) => const RoleSelectionScreen(),
-          '/otp-verification': (context) => const OTPVerificationScreen(phoneNumber: ''),
+          '/otp-verification': (context) =>
+              const OTPVerificationScreen(phoneNumber: ''),
+          '/login': (context) => const LoginScreen(),
+          '/forgot-password': (context) => const ForgotPasswordScreen(),
           '/symptom-checker': (context) => const SymptomCheckerScreen(),
         },
       ),
@@ -185,7 +194,9 @@ class AppTheme {
           backgroundColor: primaryTeal,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           elevation: 0,
           textStyle: GoogleFonts.dmSans(
             fontSize: 13,
@@ -201,7 +212,9 @@ class AppTheme {
           foregroundColor: primaryTeal,
           side: const BorderSide(color: borderColor, width: 1.5),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           textStyle: GoogleFonts.dmSans(
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -214,7 +227,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: const Color(0xFFF8FAFC),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: borderColor),
@@ -246,7 +262,6 @@ class AppTheme {
           color: textPrimary,
         ),
       ),
-
 
       // Divider Theme
       dividerTheme: const DividerThemeData(

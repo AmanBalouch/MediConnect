@@ -93,7 +93,7 @@ class WelcomeScreen extends StatelessWidget {
                       // Already have account Button
                       SecondaryButton(
                         label: 'I already have an account',
-                        onPressed: () => {},
+                        onPressed: () => {Navigator.pushNamed(context, "/login")},
                       ),
                       const SizedBox(height: 24),
 
