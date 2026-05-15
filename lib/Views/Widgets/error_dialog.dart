@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mediconnectcode/main.dart';
 
-class SuccessDialog extends StatelessWidget {
+class ErrorDialog extends StatelessWidget {
   final String title;
   final String message;
   final String buttonLabel;
   final VoidCallback onButtonPressed;
   final IconData icon;
 
-  const SuccessDialog({
+  const ErrorDialog({
     Key? key,
     required this.title,
     required this.message,
     required this.onButtonPressed,
     this.buttonLabel = 'OK',
-    this.icon = Icons.check_circle,
+    this.icon = Icons.error_outline,
   }) : super(key: key);
 
   @override
@@ -40,16 +40,16 @@ class SuccessDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Success Icon
+            // Error Icon
             Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+                color: AppTheme.accentRed.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(40),
               ),
               child: Center(
-                child: Icon(icon, color: AppTheme.primaryBlue, size: 48),
+                child: Icon(icon, color: AppTheme.accentRed, size: 48),
               ),
             ),
 
@@ -89,7 +89,7 @@ class SuccessDialog extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryBlue,
+                  color: AppTheme.accentRed,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(

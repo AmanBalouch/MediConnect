@@ -216,27 +216,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                         const SizedBox(height: 10),
 
-                        // Additional fields for doctors
-                        if (widget.userRole == 1) ...[
-                          CustomFormField(
-                            label: 'Medical specialization',
-                            controller: TextEditingController(
-                              text: 'Cardiology',
-                            ),
-                          ),
-
-                          const SizedBox(height: 10),
-
-                          CustomFormField(
-                            label: 'Medical license number',
-                            controller: TextEditingController(
-                              text: 'PMC-12345',
-                            ),
-                          ),
-
-                          const SizedBox(height: 10),
-                        ],
-
                         // Create Password
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

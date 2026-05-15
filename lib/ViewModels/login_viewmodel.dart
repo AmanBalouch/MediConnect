@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 /// Responsibilities:
 /// 1. Handle email/phone login
 /// 2. Handle password login
-/// 3. Handle Google/Facebook login (TODO)
 /// 4. Manage error states
 /// 5. Notify UI of state changes
 ///
@@ -47,7 +46,10 @@ class LoginViewModel extends ChangeNotifier {
   /// 4. Fetch user data from Firestore
   /// 5. Return success/failure
   ///
-  Future<bool> signInWithEmailPassword(String emailOrPhone, String password) async {
+  Future<bool> signInWithEmailPassword(
+    String emailOrPhone,
+    String password,
+  ) async {
     try {
       _isLoading = true;
       _errorMessage = null;
@@ -214,6 +216,88 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
+  /// Check doctor details status
+  ///
+  /// Returns:
+  /// - "/doctor-details" if doctor hasn't filled details yet
+  /// - "/symptom-checker" if doctor details are pending or approved
+  ///
+  Future<String> getDoctorNextRoute() async {
+    try {
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        print('ERROR: Current user is null');
+        return "/login";
+      }
+
+      print('DEBUG: Checking doctor details for UID: ${currentUser.uid}');
+
+      // Check if doctor details exist in doctors collection (approved)
+      final doctorSnapshot = await _firestore
+          .collection('doctors')
+          .doc(currentUser.uid)
+          .get();
+
+      if (doctorSnapshot.exists) {
+        print('DEBUG: Doctor found in doctors collection (approved)');
+        // Doctor details already approved
+        return "/symptom-checker";
+      }
+
+      // Check if doctor details exist in pending_doctor_requests
+      final pendingSnapshot = await _firestore
+          .collection('pending_doctor_requests')
+          .doc(currentUser.uid)
+          .get();
+
+      if (pendingSnapshot.exists) {
+        print('DEBUG: Doctor found in pending_doctor_requests');
+        // Doctor details already submitted, awaiting approval
+        return "/symptom-checker";
+      }
+
+      // Doctor hasn't filled details yet
+      print('DEBUG: Doctor details not found, redirecting to doctor-details');
+      return "/doctor-details";
+    } catch (e) {
+      print('ERROR in getDoctorNextRoute: $e');
+      return "/doctor-details"; // Send to details screen on error to be safe
+    }
+  }
+
+  /// Get user role from Firestore
+  ///
+  /// Returns: 0 = patient, 1 = doctor, -1 = error
+  ///
+  Future<int> getUserRole() async {
+    try {
+      User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        print('ERROR: Current user is null in getUserRole');
+        return -1;
+      }
+
+      print('DEBUG: Fetching role for UID: ${currentUser.uid}');
+
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
+      if (userDoc.exists) {
+        int role = userDoc.data()?['role'] ?? -1;
+        print('DEBUG: User role found: $role');
+        return role;
+      }
+
+      print('WARNING: User document not found');
+      return -1;
+    } catch (e) {
+      print('ERROR in getUserRole: $e');
+      return -1;
+    }
+  }
+
   /// Clear error message
   void clearError() {
     _errorMessage = null;
@@ -231,4 +315,3 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-

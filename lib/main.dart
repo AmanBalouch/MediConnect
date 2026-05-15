@@ -5,12 +5,15 @@ import 'package:provider/provider.dart';
 import 'package:mediconnectcode/ViewModels/signup_viewmodel.dart';
 import 'package:mediconnectcode/ViewModels/otp_viewmodel.dart';
 import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/doctor_details_viewmodel.dart';
 import 'package:mediconnectcode/Views/Screens/welcome_screen.dart';
 import 'package:mediconnectcode/Views/Screens/role_selection_screen.dart';
 import 'package:mediconnectcode/Views/Screens/otp_verification_screen.dart';
 import 'package:mediconnectcode/Views/Screens/login_screen.dart';
 import 'package:mediconnectcode/Views/Screens/forgot_password_screen.dart';
 import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
+import 'package:mediconnectcode/Views/Screens/doctor_details_screen.dart';
+import 'package:mediconnectcode/Views/Screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +31,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SignupViewModel()),
         ChangeNotifierProvider(create: (_) => OTPViewModel()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
+        ChangeNotifierProvider(create: (_) => DoctorDetailsViewModel()),
       ],
       child: MaterialApp(
         title: 'MediConnect',
@@ -41,6 +45,8 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),
           '/forgot-password': (context) => const ForgotPasswordScreen(),
           '/symptom-checker': (context) => const SymptomCheckerScreen(),
+          '/doctor-details': (context) => const DoctorDetailsScreen(),
+          '/settings': (context) => const SettingsScreen(),
         },
       ),
     );
@@ -88,17 +94,17 @@ class AppTheme {
       textTheme: TextTheme(
         // Display Styles
         displayLarge: GoogleFonts.dmSans(
-          fontSize: 32,
+          fontSize: 30,
           fontWeight: FontWeight.w600,
           color: textPrimary,
         ),
         displayMedium: GoogleFonts.dmSans(
-          fontSize: 28,
+          fontSize: 24,
           fontWeight: FontWeight.w600,
           color: textPrimary,
         ),
         displaySmall: GoogleFonts.dmSans(
-          fontSize: 24,
+          fontSize: 20,
           fontWeight: FontWeight.w600,
           color: textPrimary,
         ),

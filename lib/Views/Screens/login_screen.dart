@@ -32,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
-      // Navigate to home screen
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -40,7 +39,25 @@ class _LoginScreenState extends State<LoginScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pushReplacementNamed(context, "/symptom-checker");
+
+        // Small delay to ensure Firestore data is loaded
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // Check user role
+        int userRole = await loginViewModel.getUserRole();
+        print('DEBUG: User role = $userRole');
+
+        String nextRoute = "/symptom-checker"; // Default for patients
+
+        if (userRole == 1) {
+          // Doctor - check if they've filled professional details
+          nextRoute = await loginViewModel.getDoctorNextRoute();
+          print('DEBUG: Doctor next route = $nextRoute');
+        }
+
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, nextRoute);
+        }
       }
     }
   }
