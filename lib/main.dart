@@ -12,6 +12,7 @@ import 'package:mediconnectcode/Views/Screens/otp_verification_screen.dart';
 import 'package:mediconnectcode/Views/Screens/login_screen.dart';
 import 'package:mediconnectcode/Views/Screens/forgot_password_screen.dart';
 import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
+import 'package:mediconnectcode/Views/Screens/patient_home_screen.dart';
 import 'package:mediconnectcode/Views/Screens/doctor_details_screen.dart';
 import 'package:mediconnectcode/Views/Screens/settings_screen.dart';
 
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
               const OTPVerificationScreen(phoneNumber: ''),
           '/login': (context) => const LoginScreen(),
           '/forgot-password': (context) => const ForgotPasswordScreen(),
+          '/patient-home': (context) => const PatientHomeScreen(),
           '/symptom-checker': (context) => const SymptomCheckerScreen(),
           '/doctor-details': (context) => const DoctorDetailsScreen(),
           '/settings': (context) => const SettingsScreen(),

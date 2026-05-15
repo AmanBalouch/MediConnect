@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/services/grok_service.dart';
+import 'package:mediconnectcode/Views/Widgets/index.dart';
 
 class SymptomCheckerScreen extends StatefulWidget {
   const SymptomCheckerScreen({super.key});
@@ -58,6 +59,24 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
       });
     }
     _scrollToBottom();
+  }
+
+  void _onNavTap(int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/patient-home');
+        break;
+      case 1:
+        // Navigate to Chat
+        Navigator.pushNamed(context, '/chat');
+        break;
+      case 2:
+        // Already on ChatBot
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/settings');
+        break;
+    }
   }
 
   void _scrollToBottom() {
@@ -296,6 +315,10 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: PatientBottomNavBar(
+        currentIndex: 2,
+        onTap: _onNavTap,
       ),
     );
   }
