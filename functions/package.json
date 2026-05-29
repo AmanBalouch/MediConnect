@@ -1,0 +1,24 @@
+{
+  "name": "mediconnect-functions",
+  "version": "1.0.0",
+  "engines": {
+    "node": "20"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "deploy": "firebase deploy --only functions",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.2",
+    "ts-node": "^10.9.1",
+    "eslint": "^8.40.0",
+    "@types/node": "^20.4.2"
+  }
+}

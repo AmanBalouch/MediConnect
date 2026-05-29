@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 /// Doctor Model
 ///
 /// Represents a doctor's professional details
@@ -6,8 +8,8 @@
 class DoctorModel {
   final String uid;
   final String pmdcLicenseNumber;
-  final String cnicNumber;
-  final String specialization;
+  final String cnicNumber; // added CNIC
+  final List<String> specializations; // changed to list
   final String degree;
   final String yearsOfExperience;
   final String? clinicName;
@@ -15,47 +17,102 @@ class DoctorModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isVerified;
+  final String? profileImageUrl;
+  final String? name;
+  final String? email;
+  final double? rating;
+  final int? consultationFee;
 
   DoctorModel({
     required this.uid,
     required this.pmdcLicenseNumber,
     required this.cnicNumber,
-    required this.specialization,
+    required this.specializations,
     required this.degree,
     required this.yearsOfExperience,
     this.clinicName,
     this.clinicAddress,
     required this.createdAt,
     required this.updatedAt,
-    this.isVerified = false,
+    required this.isVerified,
+    this.profileImageUrl,
+    this.name,
+    this.email,
+    this.rating,
+    this.consultationFee,
   });
 
-  /// Create a copy of DoctorModel with updated fields
-  DoctorModel copyWith({
-    String? uid,
-    String? pmdcLicenseNumber,
-    String? cnicNumber,
-    String? specialization,
-    String? degree,
-    String? yearsOfExperience,
-    String? clinicName,
-    String? clinicAddress,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    bool? isVerified,
-  }) {
+  factory DoctorModel.fromMap(Map<String, dynamic> data, String id) {
+    // handle specializations being string or list
+    List<String> specs = [];
+    final rawSpecs =
+        data['specializations'] ?? data['specialization'] ?? data['speciality'];
+    if (rawSpecs is String) {
+      specs = rawSpecs
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+    } else if (rawSpecs is List) {
+      specs = rawSpecs
+          .map((s) => s?.toString() ?? '')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
+    DateTime parseDate(dynamic v) {
+      if (v == null) return DateTime.now();
+      if (v is DateTime) return v;
+      if (v is Timestamp) return v.toDate();
+      try {
+        return DateTime.parse(v.toString());
+      } catch (_) {
+        return DateTime.now();
+      }
+    }
+
     return DoctorModel(
-      uid: uid ?? this.uid,
-      pmdcLicenseNumber: pmdcLicenseNumber ?? this.pmdcLicenseNumber,
-      cnicNumber: cnicNumber ?? this.cnicNumber,
-      specialization: specialization ?? this.specialization,
-      degree: degree ?? this.degree,
-      yearsOfExperience: yearsOfExperience ?? this.yearsOfExperience,
-      clinicName: clinicName ?? this.clinicName,
-      clinicAddress: clinicAddress ?? this.clinicAddress,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      isVerified: isVerified ?? this.isVerified,
+      uid: id,
+      pmdcLicenseNumber: data['pmdcLicenseNumber'] ?? data['pmdc'] ?? '',
+      cnicNumber: data['cnicNumber'] ?? data['cnic'] ?? '',
+      specializations: specs,
+      degree: data['degree'] ?? '',
+      yearsOfExperience: data['yearsOfExperience'] ?? data['experience'] ?? '',
+      clinicName: data['clinicName'],
+      clinicAddress: data['clinicAddress'],
+      createdAt: parseDate(data['createdAt']),
+      updatedAt: parseDate(data['updatedAt']),
+      isVerified: data['isVerified'] ?? false,
+      profileImageUrl: data['profileImageUrl'] ?? data['photoURL'],
+      name: data['name'],
+      email: data['email'],
+      rating: (data['rating'] as num?)?.toDouble(),
+      consultationFee: data['consultationFee'] is int
+          ? data['consultationFee'] as int
+          : (data['consultationFee'] is num
+                ? (data['consultationFee'] as num).toInt()
+                : null),
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'pmdcLicenseNumber': pmdcLicenseNumber,
+      'cnicNumber': cnicNumber,
+      'specializations': specializations,
+      'degree': degree,
+      'yearsOfExperience': yearsOfExperience,
+      'clinicName': clinicName,
+      'clinicAddress': clinicAddress,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'isVerified': isVerified,
+      'profileImageUrl': profileImageUrl,
+      'name': name,
+      'email': email,
+      'rating': rating,
+      'consultationFee': consultationFee,
+    };
   }
 }

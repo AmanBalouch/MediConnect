@@ -14,6 +14,7 @@ import 'package:mediconnectcode/Views/Screens/forgot_password_screen.dart';
 import 'package:mediconnectcode/Views/Screens/symptom_checker_screen.dart';
 import 'package:mediconnectcode/Views/Screens/patient_home_screen.dart';
 import 'package:mediconnectcode/Views/Screens/doctor_details_screen.dart';
+import 'package:mediconnectcode/Views/Screens/doctor_home_screen.dart';
 import 'package:mediconnectcode/Views/Screens/settings_screen.dart';
 
 void main() async {
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
           '/patient-home': (context) => const PatientHomeScreen(),
           '/symptom-checker': (context) => const SymptomCheckerScreen(),
           '/doctor-details': (context) => const DoctorDetailsScreen(),
+          '/doctor-home': (context) => const DoctorHomeScreen(),
           '/settings': (context) => const SettingsScreen(),
         },
       ),

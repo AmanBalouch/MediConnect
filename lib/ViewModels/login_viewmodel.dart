@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Doctor access states used to route doctors through onboarding/approval/home.
+enum DoctorAccessState { firstLogin, pendingReview, changesRequested, approved }
+
 /// Login ViewModel
 ///
 /// Manages login business logic
@@ -216,49 +219,84 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
-  /// Check doctor details status
+  /// Resolve the current doctor access state from Firestore document presence.
   ///
-  /// Returns:
-  /// - "/doctor-details" if doctor hasn't filled details yet
-  /// - "/symptom-checker" if doctor details are pending or approved
-  ///
-  Future<String> getDoctorNextRoute() async {
+  /// Rules:
+  /// - no doctor docs → first login
+  /// - pending only → request pending
+  /// - doctor only → approved
+  /// - both docs → changes requested
+  Future<DoctorAccessState> getDoctorAccessState() async {
     try {
-      User? currentUser = _auth.currentUser;
+      final User? currentUser = _auth.currentUser;
       if (currentUser == null) {
-        print('ERROR: Current user is null');
-        return "/login";
+        print('ERROR: Current user is null in getDoctorAccessState');
+        return DoctorAccessState.firstLogin;
       }
 
-      print('DEBUG: Checking doctor details for UID: ${currentUser.uid}');
+      print('DEBUG: Checking doctor access state for UID: ${currentUser.uid}');
 
-      // Check if doctor details exist in doctors collection (approved)
       final doctorSnapshot = await _firestore
           .collection('doctors')
           .doc(currentUser.uid)
           .get();
-
-      if (doctorSnapshot.exists) {
-        print('DEBUG: Doctor found in doctors collection (approved)');
-        // Doctor details already approved
-        return "/symptom-checker";
-      }
-
-      // Check if doctor details exist in pending_doctor_requests
       final pendingSnapshot = await _firestore
           .collection('pending_doctor_requests')
           .doc(currentUser.uid)
           .get();
 
-      if (pendingSnapshot.exists) {
-        print('DEBUG: Doctor found in pending_doctor_requests');
-        // Doctor details already submitted, awaiting approval
-        return "/symptom-checker";
+      final pendingStatus = pendingSnapshot
+          .data()?['status']
+          ?.toString()
+          .toLowerCase();
+
+      if (doctorSnapshot.exists && pendingSnapshot.exists) {
+        print('DEBUG: Doctor found in both collections → changes requested');
+        return DoctorAccessState.changesRequested;
       }
 
-      // Doctor hasn't filled details yet
-      print('DEBUG: Doctor details not found, redirecting to doctor-details');
-      return "/doctor-details";
+      if (doctorSnapshot.exists) {
+        print('DEBUG: Doctor found in doctors collection → approved');
+        return DoctorAccessState.approved;
+      }
+
+      if (pendingSnapshot.exists) {
+        if (pendingStatus == 'rejected' ||
+            pendingStatus == 'changes_requested') {
+          print('DEBUG: Pending request marked for changes');
+          return DoctorAccessState.changesRequested;
+        }
+
+        print('DEBUG: Doctor found in pending_doctor_requests → pending');
+        return DoctorAccessState.pendingReview;
+      }
+
+      print('DEBUG: No doctor request found → first login');
+      return DoctorAccessState.firstLogin;
+    } catch (e) {
+      print('ERROR in getDoctorAccessState: $e');
+      return DoctorAccessState.firstLogin;
+    }
+  }
+
+  /// Check doctor details status
+  ///
+  /// Returns:
+  /// - "/doctor-details" if doctor is logging in for the first time
+  /// - "/doctor-home" if the doctor already has a request or approved profile
+  ///
+  Future<String> getDoctorNextRoute() async {
+    try {
+      final doctorState = await getDoctorAccessState();
+
+      switch (doctorState) {
+        case DoctorAccessState.firstLogin:
+          return "/doctor-details";
+        case DoctorAccessState.pendingReview:
+        case DoctorAccessState.changesRequested:
+        case DoctorAccessState.approved:
+          return "/doctor-home";
+      }
     } catch (e) {
       print('ERROR in getDoctorNextRoute: $e');
       return "/doctor-details"; // Send to details screen on error to be safe

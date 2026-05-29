@@ -305,7 +305,7 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
                         shape: BoxShape.circle,
                         color: AppTheme.primaryBlue,
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Icon(Icons.send, color: Colors.white, size: 12),
                       ),
                     ),
@@ -316,10 +316,7 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: PatientBottomNavBar(
-        currentIndex: 2,
-        onTap: _onNavTap,
-      ),
+      bottomNavigationBar: AppBottomNavBar(currentIndex: 2, onTap: _onNavTap),
     );
   }
 }

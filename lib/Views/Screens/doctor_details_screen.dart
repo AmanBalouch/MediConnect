@@ -80,7 +80,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
           buttonLabel: 'OK',
           onButtonPressed: () {
             Navigator.of(context).pop();
-            Navigator.of(context).pushReplacementNamed('/home');
+            Navigator.of(context).pushReplacementNamed('/doctor-home');
           },
           icon: Icons.check_circle,
         );
@@ -457,7 +457,8 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                           onPressed: viewModel.isLoading
                               ? null
                               : () async {
-                                  final result = await viewModel
+                                  final result = await context
+                                      .read<DoctorDetailsViewModel>()
                                       .saveDoctorDetails(
                                         pmdcLicense: _pmdcLicenseController.text
                                             .trim(),

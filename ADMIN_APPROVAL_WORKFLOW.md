@@ -12,6 +12,19 @@
 /// 6. Doctor now has access to doctor features
 ///
 /// ============================================
+/// APP ROUTING RULES (used by login/home screens)
+/// ============================================
+///
+/// - doctors/{uid} exists and pending_doctor_requests/{uid} does NOT exist
+///   → approved doctor, send to '/doctor-home'
+/// - pending_doctor_requests/{uid} exists and doctors/{uid} does NOT exist
+///   → request is pending, send to '/doctor-home' and show pending message
+/// - BOTH documents exist
+///   → admin asked for changes, send to '/doctor-home' and show update prompt
+/// - NEITHER document exists
+///   → first login, send to '/doctor-details' to complete the profile
+///
+/// ============================================
 /// FIREBASE COLLECTIONS STRUCTURE
 /// ============================================
 ///
@@ -151,4 +164,3 @@
 /// 5. Doctor can resubmit after fixing issues
 ///
 /// ============================================
-

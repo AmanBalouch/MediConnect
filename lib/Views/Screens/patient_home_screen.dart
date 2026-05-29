@@ -330,10 +330,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: PatientBottomNavBar(
-        currentIndex: 0,
-        onTap: _onNavTap,
-      ),
+      bottomNavigationBar: AppBottomNavBar(currentIndex: 0, onTap: _onNavTap),
     );
   }
 

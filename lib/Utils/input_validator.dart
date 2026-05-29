@@ -4,8 +4,8 @@
 ///
 class InputValidator {
   /// PMDC License Number regex pattern
-  /// Format: 12345-P (5 digits + hyphen + 1 letter)
-  static const String pmdcPattern = r'^\d{5}-[A-Za-z]$';
+  /// Expected format: 000000-00-[A-Z] (e.g., 123456-78-P)
+  static final RegExp _pmdcRegex = RegExp(r'^\d{6}-\d{2}-[A-Z]$');
 
   /// CNIC Number regex pattern
   /// Format: 12345-1234567-1 (5 digits + hyphen + 7 digits + hyphen + 1 digit)
@@ -20,14 +20,8 @@ class InputValidator {
   static const String phonePattern = r'^(\+92|0)?[345]\d{9}$';
 
   /// Validate PMDC License Number format
-  ///
-  /// Accepts format: 12345-P
-  /// - 5 digits
-  /// - hyphen
-  /// - 1 letter (A-Z or a-z)
-  ///
   static bool validatePMDC(String pmdc) {
-    return RegExp(pmdcPattern).hasMatch(pmdc);
+    return _pmdcRegex.hasMatch(pmdc);
   }
 
   /// Validate CNIC Number format
@@ -55,13 +49,11 @@ class InputValidator {
 
   /// Get PMDC validation error message
   static String getPMDCErrorMessage(String pmdc) {
-    if (pmdc.isEmpty) {
-      return 'PMDC License Number is required';
-    }
+    if (pmdc.isEmpty) return 'PMDC License Number is required';
     if (!validatePMDC(pmdc)) {
-      return 'Invalid format. Use: 12345-P';
+      return 'Invalid format. Use: 000000-00-[A-Z] (e.g., 123456-78-P)';
     }
-    return '';
+    return 'Invalid PMDC License Number';
   }
 
   /// Get CNIC validation error message

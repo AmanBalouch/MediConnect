@@ -36,7 +36,7 @@ class DoctorDetailsViewModel extends ChangeNotifier {
   /// 1. Validate all required fields
   /// 2. Validate PMDC license format
   /// 3. Validate CNIC format
-  /// 4. Check if PMDC license already exists in pending or approved doctors
+  /// 4. Check if PMDC license already exists for another user
   /// 5. Create DoctorModel instance
   /// 6. Save to Firestore under 'pending_doctor_requests' collection (NOT directly to doctors)
   /// 7. Admin reviews and approves → moved to 'doctors' collection
@@ -90,32 +90,43 @@ class DoctorDetailsViewModel extends ChangeNotifier {
         throw Exception('User not authenticated');
       }
 
-      // Check if PMDC license already exists in doctors collection
+      // Check if PMDC license already exists in doctors collection for another doctor
       final existingDoctor = await _firestore
           .collection('doctors')
           .where('pmdcLicenseNumber', isEqualTo: pmdcLicense)
           .get();
 
-      if (existingDoctor.docs.isNotEmpty) {
+      if (existingDoctor.docs.any((doc) => doc.id != currentUser.uid)) {
         throw Exception('This PMDC License Number is already registered');
       }
 
-      // Check if PMDC license already exists in pending requests
+      // Check if PMDC license already exists in pending requests for another doctor
       final pendingDoctor = await _firestore
           .collection('pending_doctor_requests')
           .where('pmdcLicenseNumber', isEqualTo: pmdcLicense)
           .get();
 
-      if (pendingDoctor.docs.isNotEmpty) {
+      if (pendingDoctor.docs.any((doc) => doc.id != currentUser.uid)) {
         throw Exception('This PMDC License Number is already pending review');
       }
+
+      final existingApprovedDoc = await _firestore
+          .collection('doctors')
+          .doc(currentUser.uid)
+          .get();
+
+      // Convert specialization to list
+      List<String> specializationsList = specialization
+          .split(',')
+          .map((s) => s.trim())
+          .toList();
 
       // Create DoctorModel instance
       final doctorModel = DoctorModel(
         uid: currentUser.uid,
         pmdcLicenseNumber: pmdcLicense,
         cnicNumber: cnicNumber,
-        specialization: specialization,
+        specializations: specializationsList,
         degree: degree,
         yearsOfExperience: experience,
         clinicName: clinicName.isNotEmpty ? clinicName : null,
@@ -134,7 +145,7 @@ class DoctorDetailsViewModel extends ChangeNotifier {
             'uid': doctorModel.uid,
             'pmdcLicenseNumber': doctorModel.pmdcLicenseNumber,
             'cnicNumber': doctorModel.cnicNumber,
-            'specialization': doctorModel.specialization,
+            'specializations': doctorModel.specializations,
             'degree': doctorModel.degree,
             'yearsOfExperience': doctorModel.yearsOfExperience,
             'clinicName': doctorModel.clinicName,
@@ -142,7 +153,9 @@ class DoctorDetailsViewModel extends ChangeNotifier {
             'createdAt': doctorModel.createdAt,
             'updatedAt': doctorModel.updatedAt,
             'isVerified': false,
-            'status': 'pending', // pending → approved → rejected
+            'status': existingApprovedDoc.exists
+                ? 'changes_requested'
+                : 'pending',
             'requestSubmittedAt': DateTime.now(),
           });
 
@@ -163,7 +176,7 @@ class DoctorDetailsViewModel extends ChangeNotifier {
   /// Fetch existing doctor details
   ///
   /// Checks both 'pending_doctor_requests' and 'doctors' collections
-  /// Priority: doctors collection (approved) > pending_doctor_requests (pending)
+  /// Priority: pending_doctor_requests (latest request / changes requested) > doctors (approved)
   ///
   Future<bool> fetchDoctorDetails() async {
     try {
@@ -175,41 +188,7 @@ class DoctorDetailsViewModel extends ChangeNotifier {
         throw Exception('User not authenticated');
       }
 
-      // First check if doctor is already approved in doctors collection
-      final approvedSnapshot = await _firestore
-          .collection('doctors')
-          .doc(currentUser.uid)
-          .get();
-
-      if (approvedSnapshot.exists) {
-        final data = approvedSnapshot.data() as Map<String, dynamic>;
-        _doctorDetails = DoctorModel(
-          uid: currentUser.uid,
-          pmdcLicenseNumber: data['pmdcLicenseNumber'] ?? '',
-          cnicNumber: data['cnicNumber'] ?? '',
-          specialization: data['specialization'] ?? '',
-          degree: data['degree'] ?? '',
-          yearsOfExperience: data['yearsOfExperience'] ?? '',
-          clinicName: data['clinicName'],
-          clinicAddress: data['clinicAddress'],
-          createdAt: data['createdAt'] != null
-              ? (data['createdAt'] is DateTime
-                    ? data['createdAt']
-                    : DateTime.parse(data['createdAt']))
-              : DateTime.now(),
-          updatedAt: data['updatedAt'] != null
-              ? (data['updatedAt'] is DateTime
-                    ? data['updatedAt']
-                    : DateTime.parse(data['updatedAt']))
-              : DateTime.now(),
-          isVerified: data['isVerified'] ?? false,
-        );
-        _isLoading = false;
-        notifyListeners();
-        return true;
-      }
-
-      // If not approved, check pending_doctor_requests collection
+      // First check if there is a pending request for this doctor
       final pendingSnapshot = await _firestore
           .collection('pending_doctor_requests')
           .doc(currentUser.uid)
@@ -217,27 +196,21 @@ class DoctorDetailsViewModel extends ChangeNotifier {
 
       if (pendingSnapshot.exists) {
         final data = pendingSnapshot.data() as Map<String, dynamic>;
-        _doctorDetails = DoctorModel(
-          uid: currentUser.uid,
-          pmdcLicenseNumber: data['pmdcLicenseNumber'] ?? '',
-          cnicNumber: data['cnicNumber'] ?? '',
-          specialization: data['specialization'] ?? '',
-          degree: data['degree'] ?? '',
-          yearsOfExperience: data['yearsOfExperience'] ?? '',
-          clinicName: data['clinicName'],
-          clinicAddress: data['clinicAddress'],
-          createdAt: data['createdAt'] != null
-              ? (data['createdAt'] is DateTime
-                    ? data['createdAt']
-                    : DateTime.parse(data['createdAt']))
-              : DateTime.now(),
-          updatedAt: data['updatedAt'] != null
-              ? (data['updatedAt'] is DateTime
-                    ? data['updatedAt']
-                    : DateTime.parse(data['updatedAt']))
-              : DateTime.now(),
-          isVerified: false, // Always false for pending requests
-        );
+        _doctorDetails = DoctorModel.fromMap(data, currentUser.uid);
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+
+      // If not pending, check if doctor is already approved in doctors collection
+      final approvedSnapshot = await _firestore
+          .collection('doctors')
+          .doc(currentUser.uid)
+          .get();
+
+      if (approvedSnapshot.exists) {
+        final data = approvedSnapshot.data() as Map<String, dynamic>;
+        _doctorDetails = DoctorModel.fromMap(data, currentUser.uid);
         _isLoading = false;
         notifyListeners();
         return true;
