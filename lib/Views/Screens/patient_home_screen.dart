@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/Views/Widgets/index.dart';
 
@@ -12,6 +14,8 @@ class PatientHomeScreen extends StatefulWidget {
 class _PatientHomeScreenState extends State<PatientHomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedSpecialty = 'All';
+  late Future<String?> _currentUserNameFuture;
+  bool _initializedNameFuture = false;
 
   // Mock doctors data
   final List<Map<String, dynamic>> allDoctors = [
@@ -157,6 +161,17 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initializedNameFuture) {
+      _currentUserNameFuture = context
+          .read<LoginViewModel>()
+          .getCurrentUserName();
+      _initializedNameFuture = true;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bgColor,
@@ -185,32 +200,45 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Hello Patient',
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: Colors.white,
-                        fontSize: 28,
-                      ),
-                    ),
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'P',
-                          style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(color: Colors.white, fontSize: 14),
+                FutureBuilder<String?>(
+                  future: _currentUserNameFuture,
+                  builder: (context, snapshot) {
+                    final displayName = snapshot.data?.trim().isNotEmpty == true
+                        ? snapshot.data!.trim()
+                        : 'Patient';
+                    final initials = displayName
+                        .split(' ')
+                        .where((part) => part.isNotEmpty)
+                        .take(2)
+                        .map((part) => part[0].toUpperCase())
+                        .join();
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Hello $displayName',
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(color: Colors.white, fontSize: 28),
                         ),
-                      ),
-                    ),
-                  ],
+                        Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              initials.isNotEmpty ? initials : 'P',
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(color: Colors.white, fontSize: 14),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 2),
                 Text(

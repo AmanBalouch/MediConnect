@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/services/grok_service.dart';
+import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
 import 'package:mediconnectcode/Views/Widgets/index.dart';
 
 class SymptomCheckerScreen extends StatefulWidget {
@@ -61,10 +63,15 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
     _scrollToBottom();
   }
 
-  void _onNavTap(int index) {
+  Future<void> _onNavTap(int index) async {
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/patient-home');
+        final role = await context.read<LoginViewModel>().getUserRole();
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(
+          context,
+          role == 1 ? '/doctor-home' : '/patient-home',
+        );
         break;
       case 1:
         // Navigate to Chat
@@ -216,16 +223,16 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
                     children: [
                       Text(
                         'MediBot AI',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.displayLarge?.copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       Text(
-                        'Symptom checker · Doctor finder',
-                        style: Theme.of(context).textTheme.displaySmall
-                            ?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.8),
-                            ),
+                        'Symptoms checker · Doctor finder',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.85),
+                        ),
                       ),
                     ],
                   ),
@@ -233,90 +240,31 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
               ],
             ),
           ),
-          // Chat Messages Area
+
           Expanded(
-            child: Container(
-              color: AppTheme.bgColor,
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                itemCount: _messages.length,
-                itemBuilder: (_, i) => _buildBubble(_messages[i]),
-              ),
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) => _buildBubble(_messages[index]),
             ),
           ),
-          // Loading Indicator
+
           if (_loading)
-            Container(
-              height: 3,
-              color: AppTheme.primaryBlue,
-              child: const LinearProgressIndicator(
-                value: null,
-                backgroundColor: Colors.transparent,
-                valueColor: AlwaysStoppedAnimation(AppTheme.primaryBlue),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                'Thinking...',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary),
               ),
             ),
-          // Chat Input Area
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppTheme.cardColor,
-              border: Border(top: BorderSide(color: AppTheme.borderColor)),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppTheme.bgColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: TextField(
-                      controller: _controller,
-                      enabled: !_loading,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.textPrimary,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Type symptoms...',
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                        hintStyle: Theme.of(context).textTheme.labelSmall
-                            ?.copyWith(color: AppTheme.textTertiary),
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      onSubmitted: (_) => _send(),
-                      textInputAction: TextInputAction.send,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: _loading ? null : _send,
-                  child: Opacity(
-                    opacity: _loading ? 0.6 : 1.0,
-                    child: Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppTheme.primaryBlue,
-                      ),
-                      child: const Center(
-                        child: Icon(Icons.send, color: Colors.white, size: 12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+
+          // Bottom Nav
+          AppBottomNavBar(currentIndex: 2, onTap: _onNavTap),
         ],
       ),
-      bottomNavigationBar: AppBottomNavBar(currentIndex: 2, onTap: _onNavTap),
     );
   }
 }

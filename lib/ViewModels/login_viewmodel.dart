@@ -336,6 +336,34 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
+  /// Fetch the current user's display name from `users/{uid}`.
+  ///
+  /// Returns the Firestore `username` field when available.
+  Future<String?> getCurrentUserName() async {
+    try {
+      final User? currentUser = _auth.currentUser;
+      if (currentUser == null) {
+        print('ERROR: Current user is null in getCurrentUserName');
+        return null;
+      }
+
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+      if (!userDoc.exists) {
+        print('WARNING: User document not found in getCurrentUserName');
+        return null;
+      }
+
+      final username = userDoc.data()?['username']?.toString().trim();
+      return (username == null || username.isEmpty) ? null : username;
+    } catch (e) {
+      print('ERROR in getCurrentUserName: $e');
+      return null;
+    }
+  }
+
   /// Clear error message
   void clearError() {
     _errorMessage = null;
