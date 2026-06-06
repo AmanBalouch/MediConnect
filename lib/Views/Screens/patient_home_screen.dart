@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
 import 'package:mediconnectcode/ViewModels/patient_home_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/chat_viewmodel.dart';
 import 'package:mediconnectcode/Models/doctor_model.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/Views/Widgets/index.dart';
@@ -25,6 +26,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     // Fetch doctors from Firebase when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PatientHomeViewModel>().fetchDoctors();
+      context.read<ChatViewModel>().startRoomsListener(isDoctor: false);
     });
   }
 
@@ -66,7 +68,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
       builder: (context, vm, child) {
         return Scaffold(
           backgroundColor: AppTheme.bgColor,
-          bottomNavigationBar: AppBottomNavBar(currentIndex: 0, onTap: _onNavTap),
+          bottomNavigationBar: AppBottomNavBar(
+            currentIndex: 0,
+            onTap: _onNavTap,
+            unreadCount: context.watch<ChatViewModel>().totalUnread,
+          ),
           body: Column(
             children: [
               // ── Gradient Header ────────────────────────────────────────

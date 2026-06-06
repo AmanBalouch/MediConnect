@@ -11,3 +11,6 @@ export 'package:mediconnectcode/Views/Widgets/custom_form_field.dart';
 export 'package:mediconnectcode/Views/Widgets/success_dialog.dart';
 export 'package:mediconnectcode/Views/Widgets/app_bottom_nav_bar.dart';
 export 'package:mediconnectcode/Views/Widgets/doctor_request_card.dart';
+export 'package:mediconnectcode/Views/Widgets/chat_bubble.dart';
+export 'package:mediconnectcode/Views/Widgets/payment_request_card.dart';
+export 'package:mediconnectcode/Views/Widgets/doctor_payment_popup.dart';

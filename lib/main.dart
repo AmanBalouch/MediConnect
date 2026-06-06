@@ -8,6 +8,8 @@ import 'package:mediconnectcode/ViewModels/otp_viewmodel.dart';
 import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
 import 'package:mediconnectcode/ViewModels/doctor_details_viewmodel.dart';
 import 'package:mediconnectcode/ViewModels/patient_home_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/consultation_request_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/chat_viewmodel.dart';
 import 'package:mediconnectcode/Views/Screens/welcome_screen.dart';
 import 'package:mediconnectcode/Views/Screens/role_selection_screen.dart';
 import 'package:mediconnectcode/Views/Screens/otp_verification_screen.dart';
@@ -19,6 +21,7 @@ import 'package:mediconnectcode/Views/Screens/doctor_details_screen.dart';
 import 'package:mediconnectcode/Views/Screens/doctor_home_screen.dart';
 import 'package:mediconnectcode/Views/Screens/settings_screen.dart';
 import 'package:mediconnectcode/Views/Screens/all_pending_requests_screen.dart';
+import 'package:mediconnectcode/Views/Screens/chat_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +49,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => DoctorDetailsViewModel()),
         ChangeNotifierProvider(create: (_) => PatientHomeViewModel()),
+        ChangeNotifierProvider(create: (_) => ConsultationRequestViewModel()),
+        ChangeNotifierProvider(create: (_) => ChatViewModel()),
       ],
       child: MaterialApp(
         title: 'MediConnect',
@@ -64,6 +69,8 @@ class MyApp extends StatelessWidget {
           '/doctor-home': (context) => const DoctorHomeScreen(),
           '/settings': (context) => const SettingsScreen(),
           '/pending-requests': (context) => const AllPendingRequestsScreen(),
+          '/chat': (context) => const ChatListScreen(isDoctor: false),
+          '/doctor-chat-list': (context) => const ChatListScreen(isDoctor: true),
         },
       ),
     );

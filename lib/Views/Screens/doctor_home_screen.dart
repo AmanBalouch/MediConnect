@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/consultation_request_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/chat_viewmodel.dart';
+import 'package:mediconnectcode/Models/consultation_request_model.dart';
+import 'package:mediconnectcode/Models/chat_room_model.dart';
+import 'package:mediconnectcode/Models/schedule_model.dart';
+import 'package:mediconnectcode/Views/Screens/chat_screen.dart';
+import 'package:mediconnectcode/Views/Widgets/doctor_payment_popup.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/Views/Widgets/app_bottom_nav_bar.dart';
 
@@ -20,6 +27,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   void initState() {
     super.initState();
     _doctorStateFuture = _loadDoctorState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChatViewModel>().startRoomsListener(isDoctor: true);
+      context.read<ChatViewModel>().startSchedulesListener();
+      context.read<ConsultationRequestViewModel>().startPendingRequestsListener();
+    });
   }
 
   @override
@@ -53,9 +65,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         Navigator.pushReplacementNamed(context, '/doctor-home');
         break;
       case 1:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Chat screen not implemented yet')),
-        );
+        Navigator.pushNamed(context, '/doctor-chat-list');
         break;
       case 2:
         Navigator.pushNamed(context, '/symptom-checker');
@@ -66,15 +76,35 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     }
   }
 
-  // Mock pending requests data (replace with Firestore later)
-  final List<Map<String, dynamic>> _allPendingRequests = [
-    {'name': 'Ayesha Malik',   'note': 'Chest pain, shortness of breath', 'color': null},
-    {'name': 'Zain Khan',      'note': 'Palpitations, dizziness',          'color': null},
-    {'name': 'Sara Ahmed',     'note': 'Fever and sore throat for 3 days', 'color': null},
-    {'name': 'Omar Farooq',    'note': 'Back pain, difficulty walking',    'color': null},
-    {'name': 'Hina Baig',      'note': 'Skin rash on arms and neck',       'color': null},
-    {'name': 'Bilal Hussain',  'note': 'Headache and blurred vision',      'color': null},
-  ];
+  // Accept button — shows payment popup then calls ViewModel
+  Future<void> _handleAccept(ConsultationRequestModel request) async {
+    final result = await showDialog<Map<String, String>?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const DoctorPaymentPopup(),
+    );
+
+    if (result == null || !mounted) return;
+
+    final vm = context.read<ConsultationRequestViewModel>();
+    final success = await vm.acceptRequest(
+      request: request,
+      accountType: result['accountType'] ?? 'easypaisa',
+      accountNumber: result['accountNumber'] ?? '',
+      accountHolderName: result['accountHolderName'] ?? '',
+    );
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(success
+            ? 'Request accepted! Fee request sent to patient.'
+            : vm.errorMessage ?? 'Something went wrong.'),
+        backgroundColor:
+            success ? AppTheme.primaryTeal : AppTheme.accentRed,
+      ),
+    );
+  }
 
   Widget _buildUserHeader() {
     return FutureBuilder<String?>(
@@ -366,20 +396,41 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           ),
         ),
 
-        // Show max 3 requests on home screen
+        // Real pending requests — from ViewModel state
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
-          child: Column(
-            children: _allPendingRequests.take(3).toList().asMap().entries.map((entry) {
-              final colors = [AppTheme.primaryTeal, AppTheme.primaryBlue, AppTheme.accentAmber];
-              final req = entry.value;
-              return _pendingCard(
-                req['name'],
-                req['note'],
-                colors[entry.key % colors.length],
+          child: Builder(builder: (context) {
+            final requests = context
+                .watch<ConsultationRequestViewModel>()
+                .pendingRequests
+                .take(3)
+                .toList();
+            if (requests.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  'No pending requests',
+                  style: AppTheme.small(AppTheme.textTertiary),
+                ),
               );
-            }).toList(),
-          ),
+            }
+            final colors = [
+              AppTheme.primaryTeal,
+              AppTheme.primaryBlue,
+              AppTheme.accentAmber,
+            ];
+            return Column(
+              children: requests.asMap().entries.map((entry) {
+                final req = entry.value;
+                return _pendingCard(
+                  req.patientName,
+                  req.note.isNotEmpty ? req.note : 'Needs consultation',
+                  colors[entry.key % colors.length],
+                  req,
+                );
+              }).toList(),
+            );
+          }),
         ),
 
         Padding(
@@ -392,19 +443,29 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         const SizedBox(height: 6),
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 0, 14, 0),
-          child: Column(
-            children: [
-              _scheduleCard('10:00 AM — Ayesha M.', 'Cardiology consult', true),
-              _scheduleCard('2:00 PM — Zain K.', 'Follow-up', false),
-            ],
-          ),
+          child: context.watch<ChatViewModel>().todaySchedules.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    'No schedules for today',
+                    style: AppTheme.small(AppTheme.textTertiary),
+                  ),
+                )
+              : Column(
+                  children: context
+                      .watch<ChatViewModel>()
+                      .todaySchedules
+                      .map((s) => _scheduleCard(s, context))
+                      .toList(),
+                ),
         ),
         const SizedBox(height: 24),
       ],
     );
   }
 
-  Widget _pendingCard(String? name, String? note, Color color) {
+  Widget _pendingCard(String? name, String? note, Color color,
+      [ConsultationRequestModel? request]) {
     // Make sure name and note are never empty
     final patientName = (name == null || name.trim().isEmpty) ? 'Patient' : name.trim();
     final patientNote = (note == null || note.trim().isEmpty) ? 'Needs consultation review' : note.trim();
@@ -493,15 +554,18 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           // Accept button
           Padding(
             padding: const EdgeInsets.only(right: 12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'Accept',
-                style: AppTheme.small(Colors.white, 11),
+            child: GestureDetector(
+              onTap: request != null ? () => _handleAccept(request) : null,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Accept',
+                  style: AppTheme.small(Colors.white, 11),
+                ),
               ),
             ),
           ),
@@ -510,43 +574,69 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     );
   }
 
-  Widget _scheduleCard(String title, String subtitle, bool joinable) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: joinable ? AppTheme.primaryTealLight : const Color(0xFFF3F4F6),
+  Widget _scheduleCard(ScheduleModel schedule, BuildContext context) {
+    final time = TimeOfDay.fromDateTime(schedule.scheduledTime);
+    final timeStr = time.format(context);
+    final isPast = schedule.scheduledTime.isBefore(DateTime.now());
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ChatScreen(
+            roomId: schedule.roomId,
+            otherPersonName: schedule.patientName,
+            isDoctor: true,
+          ),
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTheme.body(joinable ? AppTheme.primaryTealDark : AppTheme.textPrimary),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 6),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: isPast
+              ? const Color(0xFFF3F4F6)
+              : AppTheme.primaryTealLight,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$timeStr — ${schedule.patientName}',
+                    style: AppTheme.body(
+                      isPast ? AppTheme.textPrimary : AppTheme.primaryTealDark,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    isPast ? 'Completed' : 'Upcoming',
+                    style: AppTheme.small(AppTheme.textSecondary),
+                  ),
+                ],
               ),
-              const SizedBox(height: 3),
-              Text(
-                subtitle,
-                style: AppTheme.small(AppTheme.textSecondary),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: isPast ? AppTheme.borderColor : AppTheme.primaryTeal,
+                borderRadius: BorderRadius.circular(7),
               ),
-            ],
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: joinable ? AppTheme.primaryTeal : AppTheme.borderColor,
-              borderRadius: BorderRadius.circular(7),
+              child: Text(
+                '💬 Join',
+                style: AppTheme.small(
+                  isPast ? AppTheme.textSecondary : Colors.white,
+                ),
+              ),
             ),
-            child: Text(
-              joinable ? '💬 Join' : 'Pending',
-              style: AppTheme.small(joinable ? Colors.white : AppTheme.textSecondary),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -633,7 +723,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           );
         },
       ),
-      bottomNavigationBar: AppBottomNavBar(currentIndex: 0, onTap: _onNavTap),
+      bottomNavigationBar: AppBottomNavBar(
+        currentIndex: 0,
+        onTap: _onNavTap,
+        unreadCount: context.watch<ChatViewModel>().totalUnread,
+      ),
     );
   }
 }

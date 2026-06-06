@@ -5,10 +5,14 @@ class AppBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
+  /// Total unread messages — red dot on Chat icon when > 0
+  final int unreadCount;
+
   const AppBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.unreadCount = 0,
   });
 
   @override
@@ -18,7 +22,6 @@ class AppBottomNavBar extends StatelessWidget {
         color: AppTheme.cardColor,
         border: Border(top: BorderSide(color: AppTheme.borderColor, width: 1)),
       ),
-      // SafeArea handles bottom notch/home indicator
       child: SafeArea(
         top: false,
         child: Padding(
@@ -39,6 +42,7 @@ class AppBottomNavBar extends StatelessWidget {
                 label: 'Chat',
                 isActive: currentIndex == 1,
                 onTap: () => onTap(1),
+                badgeCount: unreadCount,
               ),
               _buildNavItem(
                 context,
@@ -67,24 +71,54 @@ class AppBottomNavBar extends StatelessWidget {
     required String label,
     required bool isActive,
     required VoidCallback onTap,
+    int badgeCount = 0,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: isActive ? AppTheme.primaryTeal : AppTheme.borderColor,
-            ),
-            child: Icon(
-              icon,
-              size: 24,
-              color: isActive ? Colors.white : AppTheme.textTertiary,
-            ),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: isActive ? AppTheme.primaryTeal : AppTheme.borderColor,
+                ),
+                child: Icon(
+                  icon,
+                  size: 24,
+                  color: isActive ? Colors.white : AppTheme.textTertiary,
+                ),
+              ),
+              if (badgeCount > 0)
+                Positioned(
+                  top: -4,
+                  right: -4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 5, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentRed,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.white, width: 1.5),
+                    ),
+                    constraints: const BoxConstraints(minWidth: 18),
+                    child: Text(
+                      badgeCount > 99 ? '99+' : '$badgeCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 4),
           Text(
