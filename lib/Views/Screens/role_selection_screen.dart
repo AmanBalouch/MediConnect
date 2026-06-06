@@ -75,9 +75,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   Text(
                     'Who are you?',
                     textAlign: TextAlign.center,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.headlineLarge?.copyWith(color: Colors.white),
+                    style: AppTheme.heading(Colors.white),
                   ),
                   const SizedBox(height: 3),
 
@@ -85,9 +83,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   Text(
                     'Select your role to personalize your experience',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.75),
-                    ),
+                    style: AppTheme.heading(Colors.white70, 18),
                   ),
                 ],
               ),
@@ -146,23 +142,11 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Patient selected',
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: AppTheme.primaryTealDark,
-                                          fontSize: 8.5,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                  ),
+                                  Text('Patient selected', style: AppTheme.label(AppTheme.primaryTealDark)),
                                   const SizedBox(height: 2),
                                   Text(
                                     'You\'ll get access to doctor search, AI chatbot & secure payments.',
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: AppTheme.textSecondary,
-                                          fontSize: 7.5,
-                                        ),
+                                    style: AppTheme.small(AppTheme.textSecondary),
                                   ),
                                 ],
                               ),
@@ -188,10 +172,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       onPressed: () => {Navigator.pushNamed(context, "/login")},
                       child: Text(
                         'Already registered? Log in',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textSecondary,
-                          fontSize: 10,
-                        ),
+                        style: AppTheme.small(AppTheme.textSecondary),
                       ),
                     ),
                   ],

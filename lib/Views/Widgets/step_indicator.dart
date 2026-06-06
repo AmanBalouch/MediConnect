@@ -39,15 +39,7 @@ class StepIndicator extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: stepLabels.map((label) {
             final isActive = stepLabels.indexOf(label) + 1 == currentStep;
-            return Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isActive
-                        ? Colors.white.withValues(alpha: 0.9)
-                        : Colors.white.withValues(alpha: 0.5),
-                    fontWeight: isActive ? FontWeight.w500 : FontWeight.normal,
-                  ),
-            );
+            return Text(label, style: AppTheme.small(isActive ? Colors.white : Colors.white54));
           }).toList(),
         ),
       ],

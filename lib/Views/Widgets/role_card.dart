@@ -97,21 +97,16 @@ class RoleCard extends StatelessWidget {
                   // Title text
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleLarge
+                    style: AppTheme.label(AppTheme.textPrimary),
                   ),
 
                   // Small spacing between title and description
                   const SizedBox(height: 4),
 
                   // Description text
-                  Container(
+                  SizedBox(
                     width: 150,
-                    child: Text(
-                      description,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.blueGrey,
-                          ),
-                    ),
+                    child: Text(description, style: AppTheme.body(Colors.blueGrey)),
                   ),
                 ],
               ),

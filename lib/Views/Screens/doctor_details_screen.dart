@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:mediconnectcode/ViewModels/doctor_details_viewmodel.dart';
 import 'package:mediconnectcode/main.dart';
@@ -20,6 +19,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
   late TextEditingController _experienceController;
   late TextEditingController _clinicNameController;
   late TextEditingController _clinicAddressController;
+  late TextEditingController _consultationFeeController;
   String _selectedSpecialization = '';
   List<String> _selectedDegrees = [];
 
@@ -58,6 +58,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
     _experienceController = TextEditingController();
     _clinicNameController = TextEditingController();
     _clinicAddressController = TextEditingController();
+    _consultationFeeController = TextEditingController();
   }
 
   @override
@@ -67,6 +68,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
     _experienceController.dispose();
     _clinicNameController.dispose();
     _clinicAddressController.dispose();
+    _consultationFeeController.dispose();
     super.dispose();
   }
 
@@ -113,10 +115,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
         elevation: 0,
         title: Text(
           'Professional Details',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTheme.label(Colors.white),
         ),
         actions: [
           Padding(
@@ -161,11 +160,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                 children: [
                   Text(
                     'Complete your profile',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
+                    style: AppTheme.heading(Colors.white, 18),
                   ),
                 ],
               ),
@@ -201,10 +196,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                               Expanded(
                                 child: Text(
                                   viewModel.errorMessage!,
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    color: AppTheme.accentRed,
-                                  ),
+                                  style: AppTheme.body(AppTheme.accentRed, 13),
                                 ),
                               ),
                             ],
@@ -213,11 +205,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       // PMDC License Number
                       Text(
                         'PMDC License Number *',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
                       ),
                       SizedBox(height: 8),
                       TextField(
@@ -248,11 +236,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       // CNIC Number
                       Text(
                         'CNIC Number *',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
                       ),
                       SizedBox(height: 8),
                       TextField(
@@ -283,11 +267,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       // Specialization Dropdown
                       Text(
                         'Specialization *',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
                       ),
                       SizedBox(height: 8),
                       DropdownButtonFormField<String>(
@@ -321,11 +301,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       // Qualification Degrees
                       Text(
                         'Qualification Degrees *',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
                       ),
                       SizedBox(height: 12),
                       Container(
@@ -338,10 +314,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                             return CheckboxListTile(
                               title: Text(
                                 degree,
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 13,
-                                  color: AppTheme.textPrimary,
-                                ),
+                                style: AppTheme.body(AppTheme.textPrimary, 13),
                               ),
                               value: _selectedDegrees.contains(degree),
                               onChanged: (bool? value) {
@@ -366,11 +339,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       // Years of Experience
                       Text(
                         'Years of Experience *',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
                       ),
                       SizedBox(height: 8),
                       TextField(
@@ -392,11 +361,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       // Clinic Name
                       Text(
                         'Clinic/Hospital Name',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
                       ),
                       SizedBox(height: 8),
                       TextField(
@@ -417,11 +382,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       // Clinic Address
                       Text(
                         'Clinic Address',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
                       ),
                       SizedBox(height: 8),
                       TextField(
@@ -433,6 +394,29 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                             padding: EdgeInsets.only(top: 12),
                             child: Icon(Icons.location_on_outlined),
                           ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+
+                      // Consultation Fee
+                      Text(
+                        'Consultation Fee (Rs.) *',
+                        style: AppTheme.label(AppTheme.textPrimary, 13),
+                      ),
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: _consultationFeeController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'e.g. 800',
+                          prefixIcon: Icon(Icons.currency_rupee),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -460,18 +444,14 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                                   final result = await context
                                       .read<DoctorDetailsViewModel>()
                                       .saveDoctorDetails(
-                                        pmdcLicense: _pmdcLicenseController.text
-                                            .trim(),
+                                        pmdcLicense: _pmdcLicenseController.text.trim(),
                                         cnicNumber: _cnicController.text.trim(),
                                         specialization: _selectedSpecialization,
                                         degree: _selectedDegrees.join(', '),
-                                        experience: _experienceController.text
-                                            .trim(),
-                                        clinicName: _clinicNameController.text
-                                            .trim(),
-                                        clinicAddress: _clinicAddressController
-                                            .text
-                                            .trim(),
+                                        experience: _experienceController.text.trim(),
+                                        clinicName: _clinicNameController.text.trim(),
+                                        clinicAddress: _clinicAddressController.text.trim(),
+                                        consultationFee: _consultationFeeController.text.trim(),
                                       );
 
                                   if (result) {
@@ -498,11 +478,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                                 )
                               : Text(
                                   'Complete Profile',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
+                                  style: AppTheme.label(Colors.white, 14),
                                 ),
                         ),
                       ),

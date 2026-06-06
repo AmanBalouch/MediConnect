@@ -31,7 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _passwordController.dispose();
     super.dispose();
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     return Consumer<SignupViewModel>(
@@ -107,8 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Text(
                         'Create account',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineLarge
-                            ?.copyWith(color: Colors.white),
+                        style: AppTheme.heading(Colors.white),
                       ),
 
                       const SizedBox(height: 3),
@@ -119,10 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ? 'Join MediConnect as a patient'
                             : 'Join MediConnect as a doctor',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineMedium
-                            ?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.75),
-                            ),
+                        style: AppTheme.heading(Colors.white70, 18),
                       ),
 
                       const SizedBox(height: 12),
@@ -220,26 +216,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Create password',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.textPrimary,
-                                    fontSize: 8.5,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                            ),
+                            Text('Create password', style: AppTheme.label()),
 
                             const SizedBox(height: 4),
 
                             TextFormField(
                               controller: _passwordController,
                               obscureText: true,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.textPrimary,
-                                    fontSize: 9,
-                                  ),
+                              style: AppTheme.body(AppTheme.textPrimary),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 11,
@@ -285,14 +269,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             const SizedBox(height: 4),
 
                             // Password instruction
-                            Text(
-                              'Password must be strong',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.textSecondary,
-                                    fontSize: 7.5,
-                                  ),
-                            ),
+                            Text('Password must be strong', style: AppTheme.small(AppTheme.textSecondary)),
                           ],
                         ),
 
@@ -314,14 +291,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextButton(
                             onPressed: () =>
                                 Navigator.pushNamed(context, '/login'),
-                            child: Text(
-                              'Already registered? Log in',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.textSecondary,
-                                    fontSize: 10,
-                                  ),
-                            ),
+                            child: Text('Already registered? Log in', style: AppTheme.small(AppTheme.textSecondary)),
                           ),
                         ),
                       ],
@@ -343,7 +313,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}';
       String email = _emailController.text.trim();
       String password = _passwordController.text;
-      String phoneNumber = _phoneController.text.trim();
+      // Remove spaces, dashes — Firebase needs +923131817437 format
+      String rawPhone = _phoneController.text.trim();
+      rawPhone = rawPhone.replaceAll(RegExp(r'[\s\-]'), '');
+      String phoneNumber = '+92$rawPhone';
       int role = widget.userRole;
 
       // Save the signup data in ViewModel (don't create account yet)
@@ -360,7 +333,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              OTPVerificationScreen(phoneNumber: '+92 $phoneNumber'),
+              OTPVerificationScreen(phoneNumber: phoneNumber),
         ),
       );
     }

@@ -22,6 +22,7 @@ class DoctorModel {
   final String? email;
   final double? rating;
   final int? consultationFee;
+  final int patientChecked; // kitne patients ne is doctor ko check karaya
 
   DoctorModel({
     required this.uid,
@@ -40,6 +41,7 @@ class DoctorModel {
     this.email,
     this.rating,
     this.consultationFee,
+    this.patientChecked = 0,
   });
 
   factory DoctorModel.fromMap(Map<String, dynamic> data, String id) {
@@ -93,6 +95,7 @@ class DoctorModel {
           : (data['consultationFee'] is num
                 ? (data['consultationFee'] as num).toInt()
                 : null),
+      patientChecked: (data['patientChecked'] as num?)?.toInt() ?? 0,
     );
   }
 
@@ -113,6 +116,7 @@ class DoctorModel {
       'email': email,
       'rating': rating,
       'consultationFee': consultationFee,
+      'patientChecked': patientChecked,
     };
   }
 }

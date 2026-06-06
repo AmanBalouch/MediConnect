@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mediconnectcode/main.dart';
 
@@ -23,18 +22,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           title: Text(
             'Logout',
-            style: GoogleFonts.dmSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.textPrimary,
-            ),
+            style: AppTheme.heading(AppTheme.textPrimary, 18),
           ),
           content: Text(
             'Are you sure you want to logout?',
-            style: GoogleFonts.dmSans(
-              fontSize: 14,
-              color: AppTheme.textSecondary,
-            ),
+            style: AppTheme.body(AppTheme.textSecondary, 14),
           ),
           actions: [
             TextButton(
@@ -43,10 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
               child: Text(
                 'Cancel',
-                style: GoogleFonts.dmSans(
-                  color: AppTheme.primaryBlue,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTheme.label(AppTheme.primaryBlue, 14),
               ),
             ),
             TextButton(
@@ -59,10 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
               child: Text(
                 'Logout',
-                style: GoogleFonts.dmSans(
-                  color: AppTheme.accentRed,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTheme.label(AppTheme.accentRed, 14),
               ),
             ),
           ],
@@ -81,11 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         centerTitle: true,
         title: Text(
           'Settings',
-          style: GoogleFonts.dmSans(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.textPrimary,
-          ),
+          style: AppTheme.heading(AppTheme.textPrimary, 20),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -105,11 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Section Header
                   Text(
                     'Account',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textSecondary,
-                    ),
+                    style: AppTheme.label(AppTheme.textSecondary, 14),
                   ),
                   const SizedBox(height: 12),
 
@@ -165,11 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Section Header
                   Text(
                     'Preferences',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textSecondary,
-                    ),
+                    style: AppTheme.label(AppTheme.textSecondary, 14),
                   ),
                   const SizedBox(height: 12),
 
@@ -225,11 +199,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Section Header
                   Text(
                     'Support',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textSecondary,
-                    ),
+                    style: AppTheme.label(AppTheme.textSecondary, 14),
                   ),
                   const SizedBox(height: 12),
 
@@ -322,18 +292,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
-                    ),
+                    style: AppTheme.label(AppTheme.textPrimary, 14),
                   ),
                   Text(
                     subtitle,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 12,
-                      color: AppTheme.textTertiary,
-                    ),
+                    style: AppTheme.body(AppTheme.textTertiary, 12),
                   ),
                 ],
               ),
@@ -378,18 +341,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Text(
                     'Logout',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.accentRed,
-                    ),
+                    style: AppTheme.label(AppTheme.accentRed, 14),
                   ),
                   Text(
                     'Sign out from your account',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 12,
-                      color: AppTheme.textTertiary,
-                    ),
+                    style: AppTheme.body(AppTheme.textTertiary, 12),
                   ),
                 ],
               ),

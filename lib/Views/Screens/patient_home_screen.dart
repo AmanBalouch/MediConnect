@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mediconnectcode/ViewModels/login_viewmodel.dart';
+import 'package:mediconnectcode/ViewModels/patient_home_viewmodel.dart';
+import 'package:mediconnectcode/Models/doctor_model.dart';
 import 'package:mediconnectcode/main.dart';
 import 'package:mediconnectcode/Views/Widgets/index.dart';
+import 'package:mediconnectcode/Views/Screens/doctor_profile_screen.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   const PatientHomeScreen({super.key});
@@ -13,82 +16,16 @@ class PatientHomeScreen extends StatefulWidget {
 
 class _PatientHomeScreenState extends State<PatientHomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _selectedSpecialty = 'All';
   late Future<String?> _currentUserNameFuture;
   bool _initializedNameFuture = false;
-
-  // Mock doctors data
-  final List<Map<String, dynamic>> allDoctors = [
-    {
-      'name': 'Dr. Rahil Mehmood',
-      'specialty': 'Cardiology',
-      'experience': '8 yrs',
-      'rating': 4.9,
-      'fee': 'Rs.800',
-      'avatar': 'RM',
-      'avatarColor': 'green',
-    },
-    {
-      'name': 'Dr. Sana Akhtar',
-      'specialty': 'Neurology',
-      'experience': '12 yrs',
-      'rating': 4.8,
-      'fee': 'Rs.1200',
-      'avatar': 'SA',
-      'avatarColor': 'blue',
-    },
-    {
-      'name': 'Dr. Farhan Ali',
-      'specialty': 'Dermatology',
-      'experience': '5 yrs',
-      'rating': 4.7,
-      'fee': 'Rs.600',
-      'avatar': 'FA',
-      'avatarColor': 'amber',
-    },
-    {
-      'name': 'Dr. Ayesha Khan',
-      'specialty': 'Cardiology',
-      'experience': '6 yrs',
-      'rating': 4.6,
-      'fee': 'Rs.900',
-      'avatar': 'AK',
-      'avatarColor': 'green',
-    },
-    {
-      'name': 'Dr. Hassan Malik',
-      'specialty': 'Orthopedic',
-      'experience': '10 yrs',
-      'rating': 4.8,
-      'fee': 'Rs.1000',
-      'avatar': 'HM',
-      'avatarColor': 'blue',
-    },
-    {
-      'name': 'Dr. Zainab Ahmed',
-      'specialty': 'Neurology',
-      'experience': '7 yrs',
-      'rating': 4.9,
-      'fee': 'Rs.1100',
-      'avatar': 'ZA',
-      'avatarColor': 'amber',
-    },
-  ];
-
-  final List<String> specialties = [
-    'All',
-    'Cardiology',
-    'Neurology',
-    'Dermatology',
-    'Orthopedic',
-  ];
-
-  late List<Map<String, dynamic>> filteredDoctors;
 
   @override
   void initState() {
     super.initState();
-    filteredDoctors = allDoctors;
+    // Fetch doctors from Firebase when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PatientHomeViewModel>().fetchDoctors();
+    });
   }
 
   @override
@@ -97,273 +34,337 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     super.dispose();
   }
 
-  void _filterDoctors() {
-    final searchQuery = _searchController.text.toLowerCase();
-
-    setState(() {
-      filteredDoctors = allDoctors.where((doctor) {
-        final matchesSearch =
-            doctor['name'].toLowerCase().contains(searchQuery) ||
-            doctor['specialty'].toLowerCase().contains(searchQuery);
-        final matchesSpecialty =
-            _selectedSpecialty == 'All' ||
-            doctor['specialty'] == _selectedSpecialty;
-
-        return matchesSearch && matchesSpecialty;
-      }).toList();
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initializedNameFuture) {
+      _currentUserNameFuture =
+          context.read<LoginViewModel>().getCurrentUserName();
+      _initializedNameFuture = true;
+    }
   }
 
   void _onNavTap(int index) {
     switch (index) {
       case 0:
-        // Already on home
         break;
       case 1:
-        // Navigate to Chat
         Navigator.pushNamed(context, '/chat');
         break;
       case 2:
-        // Navigate to ChatBot (Symptom Checker)
         Navigator.pushNamed(context, '/symptom-checker');
         break;
       case 3:
-        // Navigate to Settings
         Navigator.pushNamed(context, '/settings');
         break;
     }
   }
 
-  Color _getAvatarColor(String colorCode) {
-    switch (colorCode) {
-      case 'green':
-        return AppTheme.primaryTealLight;
-      case 'blue':
-        return AppTheme.primaryBlueLight;
-      case 'amber':
-        return AppTheme.accentAmberLight;
-      default:
-        return AppTheme.primaryTealLight;
-    }
-  }
-
-  Color _getAvatarTextColor(String colorCode) {
-    switch (colorCode) {
-      case 'green':
-        return AppTheme.primaryTealDark;
-      case 'blue':
-        return AppTheme.primaryBlueDark;
-      case 'amber':
-        return AppTheme.accentAmber;
-      default:
-        return AppTheme.primaryTealDark;
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initializedNameFuture) {
-      _currentUserNameFuture = context
-          .read<LoginViewModel>()
-          .getCurrentUserName();
-      _initializedNameFuture = true;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.bgColor,
-      body: Column(
-        children: [
-          // Gradient Header
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppTheme.primaryTealDark,
-                  AppTheme.primaryTeal,
-                  AppTheme.primaryTealMedium,
-                ],
-              ),
-            ),
-            padding: EdgeInsets.fromLTRB(
-              14,
-              MediaQuery.of(context).padding.top + 16,
-              14,
-              16,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FutureBuilder<String?>(
-                  future: _currentUserNameFuture,
-                  builder: (context, snapshot) {
-                    final displayName = snapshot.data?.trim().isNotEmpty == true
-                        ? snapshot.data!.trim()
-                        : 'Patient';
-                    final initials = displayName
-                        .split(' ')
-                        .where((part) => part.isNotEmpty)
-                        .take(2)
-                        .map((part) => part[0].toUpperCase())
-                        .join();
+    return Consumer<PatientHomeViewModel>(
+      builder: (context, vm, child) {
+        return Scaffold(
+          backgroundColor: AppTheme.bgColor,
+          bottomNavigationBar: AppBottomNavBar(currentIndex: 0, onTap: _onNavTap),
+          body: Column(
+            children: [
+              // ── Gradient Header ────────────────────────────────────────
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppTheme.primaryTealDark,
+                      AppTheme.primaryTeal,
+                      AppTheme.primaryTealMedium,
+                    ],
+                  ),
+                ),
+                padding: EdgeInsets.fromLTRB(
+                  14,
+                  MediaQuery.of(context).padding.top + 16,
+                  14,
+                  16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Greeting row with avatar
+                    FutureBuilder<String?>(
+                      future: _currentUserNameFuture,
+                      builder: (context, snapshot) {
+                        final displayName =
+                            snapshot.data?.trim().isNotEmpty == true
+                                ? snapshot.data!.trim()
+                                : 'Patient';
+                        final initials = displayName
+                            .split(' ')
+                            .where((p) => p.isNotEmpty)
+                            .take(2)
+                            .map((p) => p[0].toUpperCase())
+                            .join();
 
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Hello $displayName',
-                          style: Theme.of(context).textTheme.displayLarge
-                              ?.copyWith(color: Colors.white, fontSize: 28),
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Hello,',
+                                    style: AppTheme.body(Colors.white70, 16),
+                                  ),
+                                  Text(
+                                    displayName,
+                                    style: AppTheme.heading(Colors.white, 24),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Avatar — same style as doctor home
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.4),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  initials.isNotEmpty ? initials : 'P',
+                                  style: AppTheme.label(Colors.white, 16),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+                    Text(
+                      'Find your doctor',
+                      style: AppTheme.heading(Colors.white, 20),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Search bar
+                    TextField(
+                      controller: _searchController,
+                      onChanged: (query) => vm.filterDoctors(query),
+                      style: AppTheme.body(AppTheme.textPrimary),
+                      decoration: InputDecoration(
+                        hintText: 'Search doctors, specialists...',
+                        hintStyle: AppTheme.small(AppTheme.textTertiary),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: AppTheme.textTertiary,
+                          size: 18,
                         ),
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(8),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Fee filter chips
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: PatientHomeViewModel.feeRanges.map((range) {
+                          final isActive = range == vm.selectedFeeRange;
+                          return GestureDetector(
+                            onTap: () => vm.setFeeRange(range),
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isActive
+                                    ? Colors.white
+                                    : Colors.white.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.4),
+                                ),
+                              ),
+                              child: Text(
+                                range,
+                                style: AppTheme.small(
+                                  isActive
+                                      ? AppTheme.primaryTealDark
+                                      : Colors.white,
+                                  11,
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Specialty Filter Chips ─────────────────────────────────
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  child: Row(
+                    children: vm.getSpecialties().map((specialty) {
+                      final isActive = specialty == vm.selectedSpecialty;
+                      return GestureDetector(
+                        onTap: () => vm.setSpecialty(specialty),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 6,
                           ),
-                          child: Center(
-                            child: Text(
-                              initials.isNotEmpty ? initials : 'P',
-                              style: Theme.of(context).textTheme.labelLarge
-                                  ?.copyWith(color: Colors.white, fontSize: 14),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? AppTheme.primaryTeal
+                                : AppTheme.cardColor,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: AppTheme.borderColor),
+                          ),
+                          child: Text(
+                            specialty,
+                            style: AppTheme.small(
+                              isActive ? Colors.white : AppTheme.textSecondary,
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Find your doctor',
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: Colors.white,
-                    fontSize: 20,
+                      );
+                    }).toList(),
                   ),
                 ),
-                const SizedBox(height: 12),
-                // Search Bar
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (_) => _filterDoctors(),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Search doctors, specialists...',
-                      hintStyle: Theme.of(context).textTheme.labelSmall
-                          ?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.7),
-                          ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.white.withValues(alpha: 0.7),
-                        size: 18,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Specialty Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                children: specialties.map((specialty) {
-                  final isActive = specialty == _selectedSpecialty;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedSpecialty = specialty;
-                        _filterDoctors();
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isActive
-                            ? AppTheme.primaryTeal
-                            : AppTheme.cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppTheme.borderColor),
-                      ),
-                      child: Text(
-                        specialty,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: isActive
-                              ? Colors.white
-                              : AppTheme.textSecondary,
-                          fontSize: 9,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
               ),
-            ),
+
+              // ── Doctors List ───────────────────────────────────────────
+              Expanded(
+                child: _buildDoctorList(vm),
+              ),
+            ],
           ),
-          // Doctors List
-          Expanded(
-            child: filteredDoctors.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.person_off_outlined,
-                          size: 48,
-                          color: AppTheme.textTertiary,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No doctors found',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(color: AppTheme.textSecondary),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    itemCount: filteredDoctors.length,
-                    itemBuilder: (context, index) {
-                      final doctor = filteredDoctors[index];
-                      return _buildDoctorCard(doctor);
-                    },
-                  ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: AppBottomNavBar(currentIndex: 0, onTap: _onNavTap),
+        );
+      },
     );
   }
 
-  Widget _buildDoctorCard(Map<String, dynamic> doctor) {
-    return Container(
+  Widget _buildDoctorList(PatientHomeViewModel vm) {
+    // Loading state (first load only)
+    if (vm.isLoading && vm.allDoctors.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Error state
+    if (vm.errorMessage != null && vm.allDoctors.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: () => vm.fetchDoctors(),
+        color: AppTheme.primaryTeal,
+        child: ListView(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+            Column(
+              children: [
+                Icon(Icons.wifi_off_outlined, size: 48, color: AppTheme.textTertiary),
+                const SizedBox(height: 12),
+                Text(vm.errorMessage!, style: AppTheme.body(AppTheme.textSecondary)),
+                const SizedBox(height: 8),
+                Text(
+                  'Pull down to retry',
+                  style: AppTheme.small(AppTheme.textTertiary),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Empty state
+    if (vm.filteredDoctors.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: () => vm.fetchDoctors(),
+        color: AppTheme.primaryTeal,
+        child: ListView(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+            Column(
+              children: [
+                Icon(Icons.person_off_outlined, size: 48, color: AppTheme.textTertiary),
+                const SizedBox(height: 12),
+                Text('No doctors found', style: AppTheme.body(AppTheme.textSecondary)),
+                const SizedBox(height: 8),
+                Text('Pull down to refresh', style: AppTheme.small(AppTheme.textTertiary)),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Doctors list — pull down to refresh
+    return RefreshIndicator(
+      onRefresh: () => vm.fetchDoctors(),
+      color: AppTheme.primaryTeal,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        itemCount: vm.filteredDoctors.length,
+        itemBuilder: (context, index) {
+          final doctor = vm.filteredDoctors[index];
+          final color = vm.getAvatarColor(index, context);
+          return _buildDoctorCard(doctor, color, vm);
+        },
+      ),
+    );
+  }
+
+  Widget _buildDoctorCard(DoctorModel doctor, Color avatarColor, PatientHomeViewModel vm) {
+    final initials = vm.getInitials(doctor.name);
+    final specialty = doctor.specializations.isNotEmpty
+        ? doctor.specializations.first
+        : 'General';
+    final experience = doctor.yearsOfExperience.isNotEmpty
+        ? '${doctor.yearsOfExperience} yrs exp'
+        : '';
+    final fee = doctor.consultationFee != null
+        ? 'Rs.${doctor.consultationFee}'
+        : 'Fee N/A';
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DoctorProfileScreen(
+            doctor: doctor,
+            avatarColor: avatarColor,
+          ),
+        ),
+      ),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -373,76 +374,56 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
       ),
       child: Row(
         children: [
-          // Avatar - Larger
+          // Avatar
           Container(
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: _getAvatarColor(doctor['avatarColor']),
+              color: avatarColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
-              child: Text(
-                doctor['avatar'],
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: _getAvatarTextColor(doctor['avatarColor']),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: Text(initials, style: AppTheme.label(avatarColor)),
             ),
           ),
           const SizedBox(width: 14),
-          // Doctor Info - Larger fonts
+
+          // Doctor info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  doctor['name'],
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  doctor.name ?? 'Unknown Doctor',
+                  style: AppTheme.body(AppTheme.textPrimary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${doctor['specialty']} · ${doctor['experience']} exp',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(fontSize: 11),
+                  experience.isNotEmpty ? '$specialty · $experience' : specialty,
+                  style: AppTheme.small(AppTheme.textSecondary),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 12),
-          // Rating and Fee - Larger
+
+          // Fee and Patient Count
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                '★ ${doctor['rating']}',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: AppTheme.accentAmber,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              Text(fee, style: AppTheme.label(AppTheme.primaryTeal)),
               const SizedBox(height: 4),
               Text(
-                doctor['fee'],
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: AppTheme.primaryTeal,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
+                '${doctor.patientChecked} patients',
+                style: AppTheme.small(AppTheme.textTertiary),
               ),
             ],
           ),
         ],
       ),
+    ),
     );
   }
 }

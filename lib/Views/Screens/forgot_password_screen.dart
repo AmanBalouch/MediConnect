@@ -183,10 +183,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Text(
                     'Reset Password',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTheme.heading(Colors.white),
                   ),
                   const SizedBox(height: 3),
 
@@ -194,9 +191,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Text(
                     'Enter your email to receive password reset instructions',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.75),
-                    ),
+                    style: AppTheme.heading(Colors.white70, 18),
                   ),
                 ],
               ),
@@ -228,11 +223,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           Expanded(
                             child: Text(
                               _errorMessage!,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.accentRed,
-                                    fontSize: 9,
-                                  ),
+                              style: AppTheme.small(AppTheme.accentRed),
                             ),
                           ),
                         ],
@@ -244,11 +235,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   // Email field label
                   Text(
                     'Email Address',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppTheme.textPrimary,
-                      fontSize: 8.5,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTheme.label(),
                   ),
                   const SizedBox(height: 6),
 
@@ -257,18 +244,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     enabled: !_isLoading,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 9,
-                      color: AppTheme.textPrimary,
-                    ),
+                    style: AppTheme.body(AppTheme.textPrimary),
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
                       hintText: 'ahmed@email.com',
-                      hintStyle: Theme.of(context).textTheme.bodySmall
-                          ?.copyWith(fontSize: 9, color: AppTheme.textTertiary),
+                      hintStyle: AppTheme.small(AppTheme.textTertiary),
                       prefixIcon: Icon(
                         Icons.email_outlined,
                         size: 14,
@@ -321,11 +304,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         Expanded(
                           child: Text(
                             'We\'ll send you an email with instructions to reset your password',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: AppTheme.primaryTeal,
-                                  fontSize: 9,
-                                ),
+                            style: AppTheme.small(AppTheme.primaryTeal),
                           ),
                         ),
                       ],
@@ -355,11 +334,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         Expanded(
                           child: Text(
                             'Note: Email delivery may not work on emulator. Test on a real device for full functionality.',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: AppTheme.accentAmber,
-                                  fontSize: 9,
-                                ),
+                            style: AppTheme.small(AppTheme.accentAmber),
                           ),
                         ),
                       ],
@@ -383,12 +358,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         child: Center(
                           child: Text(
                             _isLoading ? 'Sending...' : 'Send Reset Link',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
+                            style: AppTheme.label(Colors.white),
                           ),
                         ),
                       ),
@@ -411,12 +381,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       child: Center(
                         child: Text(
                           'Back to Login',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: AppTheme.primaryTeal,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 10,
-                              ),
+                          style: AppTheme.small(AppTheme.primaryTeal),
                         ),
                       ),
                     ),
@@ -429,10 +394,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: Text(
                       'Didn\'t receive the email? Check your spam folder or try again',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.textSecondary,
-                        fontSize: 8,
-                      ),
+                      style: AppTheme.small(AppTheme.textSecondary),
                     ),
                   ),
                 ],

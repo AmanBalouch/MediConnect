@@ -34,12 +34,7 @@ class CustomFormField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Field label
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.textPrimary,
-              ),
-        ),
+        Text(label, style: AppTheme.body()),
 
         const SizedBox(height: 4),
 
@@ -49,8 +44,7 @@ class CustomFormField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              ),
+          style: AppTheme.small(AppTheme.textSecondary),
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 11,
@@ -86,14 +80,7 @@ class CustomFormField extends StatelessWidget {
                         right: BorderSide(color: AppTheme.borderColor, width: 1),
                       ),
                     ),
-                    child: Text(
-                      prefixText!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppTheme.textSecondary,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
+                    child: Text(prefixText!, style: AppTheme.small(AppTheme.textSecondary)),
                   )
                 : null,
             // Suffix widget (like password strength bars)

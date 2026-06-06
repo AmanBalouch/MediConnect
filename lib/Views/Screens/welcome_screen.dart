@@ -65,10 +65,7 @@ class WelcomeScreen extends StatelessWidget {
                       Text(
                         'MediConnect\nYour Health, Reimagined',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                              color: Colors.white,
-                              height: 1.2,
-                            ),
+                        style: AppTheme.heading(Colors.white, 24),
                       ),
                       const SizedBox(height: 12),
 
@@ -76,10 +73,7 @@ class WelcomeScreen extends StatelessWidget {
                       Text(
                         'Connect with top doctors, get AI-powered symptom analysis, and consult from anywhere in Pakistan.',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.75),
-                              height: 1.5,
-                            ),
+                        style: AppTheme.body(Colors.white70, 16),
                       ),
                       const SizedBox(height: 40),
 
@@ -101,9 +95,7 @@ class WelcomeScreen extends StatelessWidget {
                       Text(
                         'By continuing you agree to our Terms & Privacy Policy',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.5),
-                            ),
+                        style: AppTheme.small(Colors.white54),
                       ),
                     ],
                   ),

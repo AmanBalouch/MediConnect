@@ -18,39 +18,45 @@ class AppBottomNavBar extends StatelessWidget {
         color: AppTheme.cardColor,
         border: Border(top: BorderSide(color: AppTheme.borderColor, width: 1)),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(
-            context,
-            icon: Icons.home_outlined,
-            label: 'Home',
-            isActive: currentIndex == 0,
-            onTap: () => onTap(0),
+      // SafeArea handles bottom notch/home indicator
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                context,
+                icon: Icons.home_outlined,
+                label: 'Home',
+                isActive: currentIndex == 0,
+                onTap: () => onTap(0),
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.message_outlined,
+                label: 'Chat',
+                isActive: currentIndex == 1,
+                onTap: () => onTap(1),
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.smart_toy_outlined,
+                label: 'ChatBot',
+                isActive: currentIndex == 2,
+                onTap: () => onTap(2),
+              ),
+              _buildNavItem(
+                context,
+                icon: Icons.settings_outlined,
+                label: 'Settings',
+                isActive: currentIndex == 3,
+                onTap: () => onTap(3),
+              ),
+            ],
           ),
-          _buildNavItem(
-            context,
-            icon: Icons.message_outlined,
-            label: 'Chat',
-            isActive: currentIndex == 1,
-            onTap: () => onTap(1),
-          ),
-          _buildNavItem(
-            context,
-            icon: Icons.smart_toy_outlined,
-            label: 'ChatBot',
-            isActive: currentIndex == 2,
-            onTap: () => onTap(2),
-          ),
-          _buildNavItem(
-            context,
-            icon: Icons.settings_outlined,
-            label: 'Settings',
-            isActive: currentIndex == 3,
-            onTap: () => onTap(3),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -68,24 +74,24 @@ class AppBottomNavBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 18,
-            height: 18,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(12),
               color: isActive ? AppTheme.primaryTeal : AppTheme.borderColor,
             ),
             child: Icon(
               icon,
-              size: 12,
+              size: 24,
               color: isActive ? Colors.white : AppTheme.textTertiary,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isActive ? AppTheme.primaryTeal : AppTheme.textTertiary,
-              fontSize: 7,
+            style: AppTheme.small(
+              isActive ? AppTheme.primaryTeal : AppTheme.textTertiary,
+              12,
             ),
           ),
         ],

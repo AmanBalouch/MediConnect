@@ -318,11 +318,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     // Title
                     Text(
                       'Verify your number',
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            color: AppTheme.textPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      style: AppTheme.heading(AppTheme.textPrimary, 18),
                     ),
 
                     const SizedBox(height: 6),
@@ -331,21 +327,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textSecondary,
-                          fontSize: 9,
-                          height: 1.5,
-                        ),
+                        style: AppTheme.body(AppTheme.textSecondary),
                         children: [
                           const TextSpan(text: 'We sent a 6-digit code to\n'),
                           TextSpan(
                             text: widget.phoneNumber,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: AppTheme.textPrimary,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 9,
-                                ),
+                            style: AppTheme.label(AppTheme.primaryTealDark),
                           ),
                         ],
                       ),
@@ -368,11 +355,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                               keyboardType: TextInputType.number,
                               maxLength: 1,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(
-                                    color: AppTheme.textPrimary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              style: AppTheme.body(AppTheme.textPrimary),
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.all(0),
                                 counterText: '',
@@ -443,23 +426,14 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                               children: [
                                 Text(
                                   'Code expires in ${_getFormattedTime()}',
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: AppTheme.primaryTealDark,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 9,
-                                      ),
+                                  style: AppTheme.label(AppTheme.primaryTealDark),
                                 ),
                                 const SizedBox(height: 3),
                                 GestureDetector(
                                   onTap: canResend ? _handleResend : null,
                                   child: Text(
                                     "Didn't receive it? ${canResend ? 'Resend code' : 'Resend'}",
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: AppTheme.textSecondary,
-                                          fontSize: 8,
-                                        ),
+                                    style: AppTheme.small(AppTheme.textSecondary),
                                   ),
                                 ),
                               ],
@@ -485,12 +459,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       children: [
                         Text(
                           'Step 3 of 3 — Almost done!',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: AppTheme.textPrimary,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: AppTheme.label(AppTheme.primaryTealDark),
                         ),
                         const SizedBox(height: 8),
                         Row(
@@ -525,11 +494,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         onPressed: () => Navigator.pop(context),
                         child: Text(
                           'Wrong number? Change it',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: AppTheme.textSecondary,
-                                fontSize: 9,
-                              ),
+                          style: AppTheme.small(AppTheme.textSecondary),
                         ),
                       ),
                     ),

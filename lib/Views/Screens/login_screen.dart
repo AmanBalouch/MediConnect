@@ -135,11 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'Welcome back!',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineLarge
-                            ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style: AppTheme.heading(Colors.white),
                       ),
                       const SizedBox(height: 3),
 
@@ -147,10 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'Sign in to continue to MediConnect',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineMedium
-                            ?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.75),
-                            ),
+                        style: AppTheme.heading(Colors.white70, 18),
                       ),
                     ],
                   ),
@@ -185,11 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Expanded(
                                 child: Text(
                                   loginViewModel.errorMessage!,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: AppTheme.accentRed,
-                                        fontSize: 9,
-                                      ),
+                                  style: AppTheme.small(AppTheme.accentRed),
                                 ),
                               ),
                             ],
@@ -201,11 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Email field label
                       Text(
                         'Email or phone number',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textPrimary,
-                          fontSize: 8.5,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTheme.label(),
                       ),
                       const SizedBox(height: 6),
 
@@ -213,21 +198,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontSize: 9,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.body(AppTheme.textPrimary),
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 10,
                           ),
                           hintText: 'ahmed@email.com',
-                          hintStyle: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                fontSize: 9,
-                                color: AppTheme.textTertiary,
-                              ),
+                          hintStyle: AppTheme.small(AppTheme.textTertiary),
                           prefixIcon: Icon(
                             Icons.email_outlined,
                             size: 14,
@@ -262,11 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Password field label
                       Text(
                         'Password',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textPrimary,
-                          fontSize: 8.5,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTheme.label(),
                       ),
                       const SizedBox(height: 6),
 
@@ -274,21 +248,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         controller: _passwordController,
                         obscureText: !loginViewModel.isPasswordVisible,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontSize: 9,
-                          color: AppTheme.textPrimary,
-                        ),
+                        style: AppTheme.body(AppTheme.textPrimary),
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 10,
                           ),
                           hintText: '••••••••',
-                          hintStyle: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                fontSize: 9,
-                                color: AppTheme.textTertiary,
-                              ),
+                          hintStyle: AppTheme.small(AppTheme.textTertiary),
                           prefixIcon: Icon(
                             Icons.lock_outline,
                             size: 14,
@@ -341,12 +308,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             'Forgot password?',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: AppTheme.primaryTeal,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                            style: AppTheme.small(AppTheme.primaryTeal),
                           ),
                         ),
                       ),
@@ -378,11 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Text(
                               'or continue with',
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppTheme.textTertiary,
-                                    fontSize: 8,
-                                  ),
+                              style: AppTheme.small(AppTheme.textTertiary),
                             ),
                           ),
                           Expanded(
@@ -439,16 +397,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 5),
-                                    Text(
-                                      'Google',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            fontSize: 9,
-                                            color: AppTheme.textSecondary,
-                                          ),
-                                    ),
+                                    Text('Google', style: AppTheme.body(AppTheme.textSecondary)),
                                   ],
                                 ),
                               ),
@@ -495,16 +444,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 5),
-                                    Text(
-                                      'Facebook',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            fontSize: 9,
-                                            color: AppTheme.textSecondary,
-                                          ),
-                                    ),
+                                    Text('Facebook', style: AppTheme.body(AppTheme.textSecondary)),
                                   ],
                                 ),
                               ),
@@ -520,14 +460,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Wrap(
                           alignment: WrapAlignment.center,
                           children: [
-                            Text(
-                              "Don't have an account? ",
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    fontSize: 9,
-                                    color: AppTheme.textSecondary,
-                                  ),
-                            ),
+                            Text("Don't have an account? ", style: AppTheme.body(AppTheme.textSecondary)),
                             TextButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, '/role-selection');
@@ -537,15 +470,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 minimumSize: const Size(0, 0),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              child: Text(
-                                'Sign up',
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      fontSize: 9,
-                                      color: AppTheme.primaryTeal,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
+                              child: Text('Sign up', style: AppTheme.label(AppTheme.primaryTeal)),
                             ),
                           ],
                         ),

@@ -52,13 +52,7 @@ class DoctorRequestCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Center(
-                  child: Text(
-                    _initials(name),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: accent,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                  child: Text(_initials(name), style: AppTheme.label(accent)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -69,14 +63,7 @@ class DoctorRequestCard extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            name,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: AppTheme.textPrimary,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
+                          child: Text(name, style: AppTheme.body(AppTheme.textPrimary)),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -87,39 +74,19 @@ class DoctorRequestCard extends StatelessWidget {
                             color: AppTheme.primaryBlueLight,
                             borderRadius: BorderRadius.circular(999),
                           ),
-                          child: Text(
-                            status,
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: AppTheme.primaryBlueDark,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 9,
-                                ),
-                          ),
+                          child: Text(status, style: AppTheme.small(AppTheme.primaryBlueDark)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      requestType,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.textSecondary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    Text(requestType, style: AppTheme.body(AppTheme.textSecondary)),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(
-            summary,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppTheme.textPrimary,
-              height: 1.35,
-            ),
-          ),
+          Text(summary, style: AppTheme.body(AppTheme.textPrimary)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -129,12 +96,7 @@ class DoctorRequestCard extends StatelessWidget {
                 color: AppTheme.textTertiary,
               ),
               const SizedBox(width: 4),
-              Text(
-                time,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppTheme.textTertiary),
-              ),
+              Text(time, style: AppTheme.small(AppTheme.textTertiary)),
               const Spacer(),
               TextButton(
                 onPressed: onLater,

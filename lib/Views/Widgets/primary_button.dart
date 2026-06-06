@@ -42,17 +42,7 @@ class PrimaryButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppTheme.primaryTealDark,
-              ) ??
-              const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
-        ),
+        child: Text(label, style: AppTheme.label(AppTheme.primaryTealDark)),
       ),
     );
   }

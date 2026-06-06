@@ -66,7 +66,15 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     }
   }
 
-  // TODO: Firestore integration - temporarily using hardcoded data for UI development
+  // Mock pending requests data (replace with Firestore later)
+  final List<Map<String, dynamic>> _allPendingRequests = [
+    {'name': 'Ayesha Malik',   'note': 'Chest pain, shortness of breath', 'color': null},
+    {'name': 'Zain Khan',      'note': 'Palpitations, dizziness',          'color': null},
+    {'name': 'Sara Ahmed',     'note': 'Fever and sore throat for 3 days', 'color': null},
+    {'name': 'Omar Farooq',    'note': 'Back pain, difficulty walking',    'color': null},
+    {'name': 'Hina Baig',      'note': 'Skin rash on arms and neck',       'color': null},
+    {'name': 'Bilal Hussain',  'note': 'Headache and blurred vision',      'color': null},
+  ];
 
   Widget _buildUserHeader() {
     return FutureBuilder<String?>(
@@ -91,20 +99,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               children: [
                 Text(
                   'Doctor Dashboard',
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    // fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTheme.heading(Colors.white70, 20),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   displayName,
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                    color: Colors.white,
-                    // fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTheme.heading(Colors.white, 26),
                 ),
               ],
             ),
@@ -122,11 +122,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               child: Center(
                 child: Text(
                   initials.isNotEmpty ? initials : 'DR',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTheme.label(Colors.white),
                 ),
               ),
             ),
@@ -176,10 +172,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppTheme.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTheme.label(AppTheme.textPrimary, 16),
                 ),
               ),
             ],
@@ -187,10 +180,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           const SizedBox(height: 16),
           Text(
             message,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppTheme.textSecondary,
-              height: 1.5,
-            ),
+            style: AppTheme.body(AppTheme.textSecondary),
           ),
           if (actions.isNotEmpty) ...[
             const SizedBox(height: 20),
@@ -243,24 +233,17 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               children: [
                 Text(
                   'Doctor Home',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
+                  style: AppTheme.small(Colors.white, 12),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: AppTheme.heading(Colors.white, 26),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.82),
-                  ),
+                  style: AppTheme.small(Colors.white, 12),
                 ),
               ],
             ),
@@ -330,20 +313,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                     children: [
                       Text(
                         '12',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              color: AppTheme.primaryTealDark,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
+                        style: AppTheme.label(AppTheme.primaryTealDark, 15),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Today\'s appts',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.textSecondary,
-                          fontSize: 8.5,
-                        ),
+                        style: AppTheme.small(AppTheme.textSecondary),
                       ),
                     ],
                   ),
@@ -362,20 +337,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                     children: [
                       Text(
                         'Rs.9.6K',
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              color: AppTheme.primaryBlueDark,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
+                        style: AppTheme.label(AppTheme.primaryBlueDark, 16),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Earnings',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.textSecondary,
-                          fontSize: 8.5,
-                        ),
+                        style: AppTheme.small(AppTheme.textSecondary),
                       ),
                     ],
                   ),
@@ -390,39 +357,28 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Pending requests',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.textPrimary,
-                ),
-              ),
-              Text(
-                'View all →',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: AppTheme.primaryBlueDark,
-                  fontWeight: FontWeight.w600,
-                ),
+              Text('Pending requests', style: AppTheme.label(AppTheme.textPrimary, 16)),
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/pending-requests'),
+                child: Text('View all →', style: AppTheme.label(AppTheme.primaryBlueDark, 16)),
               ),
             ],
           ),
         ),
 
+        // Show max 3 requests on home screen
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
           child: Column(
-            children: [
-              _pendingCard(
-                'Ayesha Malik',
-                'Chest pain, shortness of breath',
-                AppTheme.primaryTeal,
-              ),
-              _pendingCard(
-                'Zain Khan',
-                'Palpitations, dizziness',
-                AppTheme.primaryBlue,
-              ),
-            ],
+            children: _allPendingRequests.take(3).toList().asMap().entries.map((entry) {
+              final colors = [AppTheme.primaryTeal, AppTheme.primaryBlue, AppTheme.accentAmber];
+              final req = entry.value;
+              return _pendingCard(
+                req['name'],
+                req['note'],
+                colors[entry.key % colors.length],
+              );
+            }).toList(),
           ),
         ),
 
@@ -430,10 +386,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           padding: const EdgeInsets.fromLTRB(14, 2, 14, 0),
           child: Text(
             'Today\'s schedule',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
-            ),
+            style: AppTheme.label(AppTheme.textPrimary, 16),
           ),
         ),
         const SizedBox(height: 6),
@@ -452,30 +405,24 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   }
 
   Widget _pendingCard(String? name, String? note, Color color) {
-    final safeName = (name ?? '').trim().isEmpty ? 'Patient' : name!.trim();
-    final safeNote = (note ?? '').trim().isEmpty
-        ? 'Needs consultation review'
-        : note!.trim();
-    final initials = safeName
+    // Make sure name and note are never empty
+    final patientName = (name == null || name.trim().isEmpty) ? 'Patient' : name.trim();
+    final patientNote = (note == null || note.trim().isEmpty) ? 'Needs consultation review' : note.trim();
+
+    // Get initials from name (e.g. "Ayesha Malik" → "AM")
+    final initials = patientName
         .split(' ')
-        .where((e) => e.isNotEmpty)
-        .map((e) => e[0])
+        .where((word) => word.isNotEmpty)
         .take(2)
-        .join()
-        .toUpperCase();
+        .map((word) => word[0].toUpperCase())
+        .join();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border(
-          left: BorderSide(color: color, width: 4),
-          top: BorderSide(color: AppTheme.borderColor, width: 1),
-          right: BorderSide(color: AppTheme.borderColor, width: 1),
-          bottom: BorderSide(color: AppTheme.borderColor, width: 1),
-        ),
+        border: Border.all(color: AppTheme.borderColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -485,72 +432,76 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Colored left accent bar
           Container(
-            width: 46,
-            height: 46,
+            width: 5,
+            height: 72,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              color: color,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(14),
+                bottomLeft: Radius.circular(14),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // Avatar circle with initials
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: color.withValues(alpha: 0.15),
             ),
             child: Center(
               child: Text(
                 initials.isEmpty ? 'P' : initials,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                  letterSpacing: 0.5,
-                ),
+                style: AppTheme.label(color),
               ),
             ),
           ),
-          const SizedBox(width: 14),
+
+          const SizedBox(width: 12),
+
+          // Patient name and symptoms
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  safeName,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1a1a2e),
-                    height: 1.2,
-                  ),
+                  patientName,
+                  style: AppTheme.body(AppTheme.textPrimary),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
-                  safeNote,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF6b7280),
-                    height: 1.3,
-                  ),
+                  patientNote,
+                  style: AppTheme.small(AppTheme.textSecondary, 11),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'Accept',
-              style: TextStyle(
+
+          const SizedBox(width: 10),
+
+          // Accept button
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
                 color: color,
-                fontWeight: FontWeight.w700,
-                fontSize: 9,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Accept',
+                style: AppTheme.small(Colors.white, 11),
               ),
             ),
           ),
@@ -575,21 +526,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: joinable
-                      ? AppTheme.primaryTealDark
-                      : AppTheme.textPrimary,
-                ),
+                style: AppTheme.body(joinable ? AppTheme.primaryTealDark : AppTheme.textPrimary),
               ),
               const SizedBox(height: 3),
               Text(
                 subtitle,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: 8.5,
-                  color: AppTheme.textSecondary,
-                ),
+                style: AppTheme.small(AppTheme.textSecondary),
               ),
             ],
           ),
@@ -601,10 +543,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
             ),
             child: Text(
               joinable ? '💬 Join' : 'Pending',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: joinable ? Colors.white : AppTheme.textSecondary,
-                fontSize: 8,
-              ),
+              style: AppTheme.small(joinable ? Colors.white : AppTheme.textSecondary),
             ),
           ),
         ],
@@ -698,3 +637,4 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     );
   }
 }
+

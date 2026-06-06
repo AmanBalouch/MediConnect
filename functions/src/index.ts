@@ -60,9 +60,11 @@ export const onPendingDoctorRequestVerified = functions.firestore
       await db.runTransaction(async (tx: admin.firestore.Transaction) => {
         const targetSnap = await tx.get(targetRef);
         if (targetSnap.exists) {
-          // merge missing fields but keep existing
+          // Doctor already in collection — merge fields but DO NOT reset patientChecked
           tx.set(targetRef, normalized, { merge: true });
         } else {
+          // New doctor — add patientChecked starting at 0
+          normalized.patientChecked = 0;
           tx.set(targetRef, normalized, { merge: false });
         }
 

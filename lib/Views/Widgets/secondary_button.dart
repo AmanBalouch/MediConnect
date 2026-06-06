@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mediconnectcode/main.dart';
 
 /// Secondary Action Button Widget
 ///
@@ -47,17 +48,7 @@ class SecondaryButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: textColor ?? Colors.white,
-              ) ??
-              const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.5,
-              ),
-        ),
+        child: Text(label, style: AppTheme.label(textColor ?? Colors.white)),
       ),
     );
   }

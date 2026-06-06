@@ -50,6 +50,7 @@ class DoctorDetailsViewModel extends ChangeNotifier {
     required String experience,
     required String clinicName,
     required String clinicAddress,
+    required String consultationFee,
   }) async {
     try {
       _isLoading = true;
@@ -72,6 +73,14 @@ class DoctorDetailsViewModel extends ChangeNotifier {
       }
       if (experience.isEmpty) {
         throw Exception('Years of experience is required');
+      }
+      if (consultationFee.isEmpty) {
+        throw Exception('Consultation fee is required');
+      }
+      // Fee must be a valid number
+      final feeValue = int.tryParse(consultationFee);
+      if (feeValue == null || feeValue <= 0) {
+        throw Exception('Please enter a valid consultation fee');
       }
 
       // Validate PMDC license format (e.g., 12345-P)
@@ -115,6 +124,13 @@ class DoctorDetailsViewModel extends ChangeNotifier {
           .doc(currentUser.uid)
           .get();
 
+      // Fetch doctor's name from users collection
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+      final doctorName = userDoc.data()?['username']?.toString().trim();
+
       // Convert specialization to list
       List<String> specializationsList = specialization
           .split(',')
@@ -134,6 +150,8 @@ class DoctorDetailsViewModel extends ChangeNotifier {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         isVerified: false,
+        consultationFee: int.tryParse(consultationFee),
+        name: (doctorName != null && doctorName.isNotEmpty) ? doctorName : null,
       );
 
       // Save to pending_doctor_requests collection (NOT to doctors collection)
@@ -143,6 +161,7 @@ class DoctorDetailsViewModel extends ChangeNotifier {
           .doc(currentUser.uid)
           .set({
             'uid': doctorModel.uid,
+            'name': doctorModel.name,
             'pmdcLicenseNumber': doctorModel.pmdcLicenseNumber,
             'cnicNumber': doctorModel.cnicNumber,
             'specializations': doctorModel.specializations,
@@ -153,6 +172,7 @@ class DoctorDetailsViewModel extends ChangeNotifier {
             'createdAt': doctorModel.createdAt,
             'updatedAt': doctorModel.updatedAt,
             'isVerified': false,
+            'consultationFee': doctorModel.consultationFee,
             'status': existingApprovedDoc.exists
                 ? 'changes_requested'
                 : 'pending',

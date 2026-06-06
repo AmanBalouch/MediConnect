@@ -114,9 +114,7 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
           const SizedBox(width: 6),
           Text(
             'MediBot',
-            style: Theme.of(
-              context,
-            ).textTheme.labelSmall?.copyWith(color: AppTheme.textTertiary),
+            style: AppTheme.small(AppTheme.textTertiary),
           ),
         ],
       ),
@@ -164,13 +162,8 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
             ),
             child: Text(
               message['text']!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isUser
-                    ? Colors.white
-                    : (isAISuggest
-                          ? AppTheme.primaryBlueDark
-                          : AppTheme.textPrimary),
-                height: 1.4,
+              style: AppTheme.body(
+                isUser ? Colors.white : (isAISuggest ? AppTheme.primaryBlueDark : AppTheme.textPrimary),
               ),
             ),
           ),
@@ -183,9 +176,11 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bgColor,
+      // Navbar sits separately so text field never hides behind it
+      bottomNavigationBar: AppBottomNavBar(currentIndex: 2, onTap: _onNavTap),
       body: Column(
         children: [
-          // Blue Gradient Header (like login/signup pages)
+          // Blue Gradient Header
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -203,7 +198,6 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
             ),
             child: Row(
               children: [
-                // Bot Icon
                 Container(
                   width: 26,
                   height: 26,
@@ -216,24 +210,12 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Title and Subtitle
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'MediBot AI',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        'Symptoms checker · Doctor finder',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.85),
-                        ),
-                      ),
+                      Text('MediBot AI', style: AppTheme.label(Colors.white)),
+                      Text('Symptoms checker · Doctor finder', style: AppTheme.small(Colors.white)),
                     ],
                   ),
                 ),
@@ -241,6 +223,7 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
             ),
           ),
 
+          // Messages list
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -250,19 +233,77 @@ class _SymptomCheckerScreenState extends State<SymptomCheckerScreen> {
             ),
           ),
 
+          // "Thinking..." indicator
           if (_loading)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                'Thinking...',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                children: [
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppTheme.primaryTeal,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text('Thinking...', style: AppTheme.small(AppTheme.textSecondary)),
+                ],
               ),
             ),
 
-          // Bottom Nav
-          AppBottomNavBar(currentIndex: 2, onTap: _onNavTap),
+          // Text input field — sits above navbar, never hidden
+          Container(
+            color: AppTheme.cardColor,
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+            child: Row(
+              children: [
+                // Input field
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    textCapitalization: TextCapitalization.sentences,
+                    style: AppTheme.body(AppTheme.textPrimary),
+                    decoration: InputDecoration(
+                      hintText: 'Describe your symptoms...',
+                      hintStyle: AppTheme.small(AppTheme.textTertiary),
+                      filled: true,
+                      fillColor: AppTheme.bgColor,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    onSubmitted: (_) => _send(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Send button
+                GestureDetector(
+                  onTap: _send,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryTeal,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.send_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mediconnectcode/main.dart';
 
 class ErrorDialog extends StatelessWidget {
@@ -58,11 +57,7 @@ class ErrorDialog extends StatelessWidget {
             // Title
             Text(
               title,
-              style: GoogleFonts.dmSans(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
-              ),
+              style: AppTheme.heading(AppTheme.textPrimary, 18),
               textAlign: TextAlign.center,
             ),
 
@@ -71,12 +66,7 @@ class ErrorDialog extends StatelessWidget {
             // Message
             Text(
               message,
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                color: AppTheme.textSecondary,
-                height: 1.5,
-              ),
+              style: AppTheme.body(AppTheme.textSecondary),
               textAlign: TextAlign.center,
             ),
 
@@ -95,11 +85,7 @@ class ErrorDialog extends StatelessWidget {
                 child: Center(
                   child: Text(
                     buttonLabel,
-                    style: GoogleFonts.dmSans(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
+                    style: AppTheme.label(Colors.white),
                   ),
                 ),
               ),

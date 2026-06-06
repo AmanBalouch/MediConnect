@@ -51,6 +51,15 @@ class OTPViewModel extends ChangeNotifier {
       _successMessage = null;
       notifyListeners();
 
+      // Debug mode mein Play Integrity bypass karo
+      // Production mein yeh line kaam nahi karti automatically
+      assert(() {
+        FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: true,
+        );
+        return true;
+      }());
+
       print('Sending OTP to: $phoneNumber');
 
       await _auth.verifyPhoneNumber(
